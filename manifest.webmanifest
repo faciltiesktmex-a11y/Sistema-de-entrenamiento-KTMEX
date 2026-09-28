@@ -1,0 +1,14 @@
+{
+  "name": "KTMEX Training · QR y DC3",
+  "short_name": "Training",
+  "description": "Consulta y administración de capacitación, códigos QR y documentos DC3.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F1F5F9",
+  "theme_color": "#0A1628",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}
+  ]
+}
