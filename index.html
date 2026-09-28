@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0A1628">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="KTMEX Training">
+  <title>KTMEX Training · QR y DC3</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    *{box-sizing:border-box;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
+    :root{--navy:#0A1628;--navy2:#102442;--blue:#2563EB;--blue2:#1D4ED8;--bg:#F1F5F9;--card:#fff;--border:#E2E8F0;--text:#1E293B;--muted:#64748B;--green:#16A34A;--amber:#D97706;--red:#DC2626;--purple:#7C3AED}
+    html{min-height:100%;background:var(--bg)}body{margin:0;min-height:100vh;background:var(--bg);color:var(--text)}
+    button,input,select,textarea{font:inherit}.mono{font-family:'Space Mono',monospace}.hidden{display:none!important}
+    .app-nav{position:sticky;top:0;z-index:80;background:var(--navy);color:#fff;box-shadow:0 8px 28px rgba(10,22,40,.16)}
+    .nav-inner{max-width:1500px;margin:auto;min-height:66px;padding:0 22px;display:flex;align-items:center;gap:18px}
+    .brand{display:flex;align-items:center;gap:11px;min-width:max-content}.brand-mark{width:39px;height:39px;border-radius:12px;background:#2D67EA;display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
+    .brand-mark i{font-size:18px}.brand b{display:block;font-size:.94rem}.brand small{display:block;color:#AFC2DF;font-size:.67rem;margin-top:1px}
+    .nav-links{display:flex;align-items:center;gap:4px;flex:1;overflow-x:auto;scrollbar-width:none}.nav-links::-webkit-scrollbar{display:none}
+    .nav-btn{border:0;background:transparent;color:#B9C8DC;border-radius:9px;padding:9px 11px;white-space:nowrap;font-size:.78rem;font-weight:600;cursor:pointer;transition:.15s}
+    .nav-btn:hover,.nav-btn.active{background:rgba(255,255,255,.10);color:#fff}.nav-btn i{margin-right:5px}
+    .session-box{display:flex;align-items:center;gap:10px;margin-left:auto;min-width:max-content}.avatar{width:34px;height:34px;border-radius:50%;background:#2D67EA;display:grid;place-items:center;font-weight:700;font-size:.76rem}
+    .session-meta b{display:block;font-size:.75rem;max-width:170px;overflow:hidden;text-overflow:ellipsis}.session-meta small{display:block;color:#9FB2CE;font-size:.64rem}.icon-btn{width:36px;height:36px;border:0;border-radius:9px;background:rgba(255,255,255,.09);color:#D9E4F4;cursor:pointer}.icon-btn:hover{background:rgba(255,255,255,.16)}
+    .page{max-width:1450px;margin:0 auto;padding:26px 22px 50px}.view{display:none;animation:fadeUp .25s ease both}.view.active{display:block}@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    .page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}.eyebrow{font-size:.68rem;font-weight:800;letter-spacing:.12em;color:var(--blue);text-transform:uppercase;margin-bottom:5px}.page-head h1{font-size:1.55rem;margin:0;color:var(--navy);letter-spacing:-.025em}.page-head p{margin:5px 0 0;color:var(--muted);font-size:.84rem}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:0 2px 5px rgba(15,23,42,.04)}.card-pad{padding:20px}.card-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.card-title h2,.card-title h3{margin:0;color:var(--navy);font-size:1rem}.card-title p{margin:3px 0 0;color:var(--muted);font-size:.74rem}
+    .btn{border:0;border-radius:11px;padding:10px 15px;font-size:.79rem;font-weight:700;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px}.btn:active{transform:scale(.98)}.btn:disabled{opacity:.48;cursor:not-allowed;transform:none}.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue2)}.btn-soft{background:#EFF6FF;color:#1D4ED8}.btn-soft:hover{background:#DBEAFE}.btn-gray{background:#F1F5F9;color:#475569}.btn-gray:hover{background:#E2E8F0}.btn-green{background:#16A34A;color:#fff}.btn-red{background:#FEE2E2;color:#B91C1C}.btn-sm{min-height:32px;padding:7px 10px;border-radius:8px;font-size:.72rem}.btn-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+    .field{display:flex;flex-direction:column;gap:6px}.field label{font-size:.72rem;font-weight:700;color:#475569}.field small{color:var(--muted);font-size:.67rem}.inp{width:100%;border:1.5px solid var(--border);border-radius:11px;padding:10px 12px;background:#FAFBFC;color:var(--text);font-size:.82rem;outline:none;transition:.15s}.inp:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.09);background:#fff}textarea.inp{resize:vertical;min-height:80px}.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.full{grid-column:1/-1}
+    .kpi-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;margin-bottom:18px}.kpi{padding:16px;border-radius:15px;background:#fff;border:1px solid var(--border);min-height:112px}.kpi-icon{width:33px;height:33px;border-radius:9px;display:grid;place-items:center;margin-bottom:12px}.kpi b{display:block;font-size:1.45rem;color:var(--navy);line-height:1}.kpi span{display:block;font-size:.67rem;color:var(--muted);font-weight:700;margin-top:7px;line-height:1.25}.bg-blue{background:#DBEAFE;color:#1D4ED8}.bg-green{background:#DCFCE7;color:#15803D}.bg-amber{background:#FEF3C7;color:#B45309}.bg-red{background:#FEE2E2;color:#B91C1C}.bg-purple{background:#EDE9FE;color:#6D28D9}.bg-slate{background:#E2E8F0;color:#475569}
+    .hero{background:linear-gradient(135deg,#0A1628,#163761);color:#fff;border-radius:22px;padding:28px;display:flex;align-items:center;justify-content:space-between;gap:22px;margin-bottom:18px;overflow:hidden;position:relative}.hero:after{content:'';position:absolute;width:220px;height:220px;border-radius:50%;right:-55px;top:-90px;background:rgba(45,103,234,.32)}.hero>div{position:relative;z-index:1}.hero h1{margin:0 0 7px;font-size:1.65rem}.hero p{margin:0;color:#C6D4E7;font-size:.83rem;max-width:650px}.hero .btn{background:#fff;color:#12305B}
+    .toolbar{display:flex;gap:9px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px}.toolbar .grow{flex:1;min-width:220px}.toolbar .field{min-width:160px}.search-wrap{position:relative}.search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94A3B8;font-size:.78rem}.search-wrap .inp{padding-left:34px}
+    .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:13px;background:#fff}.table{width:100%;border-collapse:collapse;min-width:920px}.table th{background:#F8FAFC;color:#64748B;text-align:left;text-transform:uppercase;letter-spacing:.04em;font-size:.62rem;padding:10px 11px;border-bottom:1px solid var(--border);white-space:nowrap}.table td{font-size:.75rem;padding:10px 11px;border-bottom:1px solid #EEF2F7;vertical-align:middle}.table tr:last-child td{border-bottom:0}.table tbody tr:hover{background:#FAFCFF}.empty-cell{text-align:center!important;color:#94A3B8;padding:34px!important}.nowrap{white-space:nowrap}
+    .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:7px;font-size:.66rem;font-weight:800;white-space:nowrap}.status-vigente{background:#DCFCE7;color:#166534;border:1px solid #BBF7D0}.status-por-vencer{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A}.status-vencida{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}.status-sin-definir{background:#E2E8F0;color:#475569;border:1px solid #CBD5E1}.badge-dc3{background:#EDE9FE;color:#6D28D9}.badge-none{background:#F1F5F9;color:#64748B}
+    .login-shell{min-height:calc(100vh - 66px);display:grid;place-items:center;padding:24px}.login-card{width:min(430px,100%);padding:29px}.login-logo{width:56px;height:56px;border-radius:17px;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:22px;margin-bottom:19px}.login-card h1{margin:0;color:var(--navy);font-size:1.55rem}.login-card>p{margin:7px 0 21px;color:var(--muted);font-size:.8rem}.login-card .field{margin-bottom:12px}.login-foot{margin-top:17px;padding-top:15px;border-top:1px solid var(--border);color:#94A3B8;font-size:.67rem;text-align:center}
+    .qr-layout{display:grid;grid-template-columns:minmax(280px,430px) minmax(0,1fr);gap:16px}.scan-box{padding:20px}.scanner{display:none;position:relative;background:#0F172A;border-radius:14px;overflow:hidden;margin:13px 0}.scanner.active{display:block}.scanner video{display:block;width:100%;max-height:330px;object-fit:cover}.scanner-line{position:absolute;left:12%;right:12%;top:50%;height:2px;background:#4ADE80;box-shadow:0 0 12px #4ADE80;animation:scan 1.8s ease-in-out infinite}@keyframes scan{0%,100%{transform:translateY(-90px)}50%{transform:translateY(90px)}}
+    .qr-help{margin-top:14px;padding:12px;border-radius:11px;background:#EFF6FF;color:#1E40AF;font-size:.72rem;line-height:1.45}.result-empty{min-height:360px;display:grid;place-items:center;text-align:center;padding:30px;color:#94A3B8}.result-empty i{font-size:42px;margin-bottom:12px;color:#CBD5E1}.identity{background:linear-gradient(135deg,#0A1628,#173B6B);color:#fff;border-radius:16px;padding:20px;display:flex;justify-content:space-between;gap:18px}.identity h2{margin:0 0 4px;font-size:1.25rem}.identity p{margin:0;color:#C6D4E7;font-size:.75rem}.identity-grid{display:grid;grid-template-columns:repeat(3,minmax(110px,1fr));gap:8px;margin-top:14px}.identity-item{padding:9px 10px;border-radius:9px;background:rgba(255,255,255,.08)}.identity-item span{display:block;color:#9FB2CE;font-size:.6rem;text-transform:uppercase;font-weight:700}.identity-item b{display:block;margin-top:3px;font-size:.73rem}.status-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:13px 0}.summary-item{padding:12px;border-radius:12px;border:1px solid var(--border);background:#fff}.summary-item b{display:block;font-size:1.25rem}.summary-item span{font-size:.67rem;color:var(--muted);font-weight:700}.training-section{margin-top:15px}.training-section-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}.training-section-head h3{margin:0;font-size:.82rem;color:var(--navy)}.training-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.training-card{border:1px solid var(--border);border-radius:13px;padding:13px;background:#fff}.training-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.training-card h4{margin:0;color:var(--navy);font-size:.84rem}.training-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:10px 0}.training-meta div{background:#F8FAFC;border-radius:8px;padding:7px}.training-meta span{display:block;font-size:.57rem;text-transform:uppercase;color:#94A3B8;font-weight:700}.training-meta b{display:block;font-size:.68rem;margin-top:2px}.section-empty{border:1px dashed #CBD5E1;border-radius:11px;padding:13px;text-align:center;color:#94A3B8;font-size:.7rem}
+    .notice{border-radius:12px;padding:12px 14px;font-size:.73rem;line-height:1.45}.notice-info{background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE}.notice-warn{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A}.notice-ok{background:#F0FDF4;color:#166534;border:1px solid #BBF7D0}.notice-error{background:#FEF2F2;color:#991B1B;border:1px solid #FECACA}
+    .catalog-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.chips{display:flex;gap:7px;flex-wrap:wrap}.chip{padding:7px 10px;border-radius:9px;background:#F1F5F9;color:#475569;font-size:.7rem;font-weight:700}.import-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:14px 0}.import-stat{padding:11px;border:1px solid var(--border);border-radius:11px}.import-stat b{display:block;font-size:1.15rem;color:var(--navy)}.import-stat span{font-size:.62rem;color:var(--muted);font-weight:700}
+    .modal-bg{position:fixed;inset:0;z-index:200;background:rgba(10,22,40,.67);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;padding:18px}.modal-bg.open{display:flex}.modal{width:min(720px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 25px 80px rgba(10,22,40,.32);animation:modalIn .2s ease both}.modal.wide{width:min(1040px,100%)}@keyframes modalIn{from{opacity:0;transform:scale(.97) translateY(8px)}to{opacity:1;transform:none}}.modal-head{padding:16px 19px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;background:#fff;z-index:2}.modal-head h3{margin:0;color:var(--navy);font-size:1rem}.modal-close{width:32px;height:32px;border:0;border-radius:8px;background:#F1F5F9;color:#64748B;cursor:pointer}.modal-body{padding:19px}.modal-foot{padding:13px 19px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:#fff}.pdf-frame{width:100%;height:68vh;border:1px solid var(--border);border-radius:10px;background:#F8FAFC}
+    #toast{position:fixed;right:18px;bottom:18px;z-index:400;max-width:420px;background:#0F172A;color:#fff;border-radius:12px;padding:12px 15px;display:none;align-items:flex-start;gap:9px;box-shadow:0 15px 40px rgba(15,23,42,.28);font-size:.75rem}#toast.show{display:flex;animation:toastIn .2s ease}@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}#toast.ok i{color:#4ADE80}#toast.err i{color:#F87171}#toast.info i{color:#60A5FA}
+    .loader-bg{position:fixed;inset:0;z-index:350;background:rgba(241,245,249,.72);backdrop-filter:blur(2px);display:none;place-items:center}.loader-bg.open{display:grid}.loader-card{background:#fff;border:1px solid var(--border);border-radius:15px;padding:19px 24px;display:flex;align-items:center;gap:12px;box-shadow:0 15px 45px rgba(15,23,42,.16);font-size:.78rem;font-weight:700;color:var(--navy)}.spin{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+    #connection-pill{position:fixed;right:14px;bottom:14px;z-index:70;border-radius:999px;padding:7px 10px;background:#065F46;color:#fff;font-size:.62rem;font-weight:800;box-shadow:0 8px 25px rgba(15,23,42,.18);display:flex;align-items:center;gap:6px}#connection-pill.offline{background:#991B1B}
+    .qr-print-label{border:2px solid var(--navy);border-radius:14px;padding:16px;text-align:center;max-width:330px;margin:auto}.qr-print-label h3{margin:10px 0 3px;color:var(--navy)}.qr-print-label p{margin:0;color:var(--muted);font-size:.7rem}.qr-code-box{width:220px;min-height:220px;margin:8px auto;display:grid;place-items:center}.qr-code-box img,.qr-code-box canvas{max-width:220px!important;height:auto!important}
+    @media(max-width:1180px){.kpi-grid{grid-template-columns:repeat(4,1fr)}.training-cards{grid-template-columns:1fr}.session-meta{display:none}}
+    @media(max-width:900px){.nav-inner{padding:0 12px;gap:10px}.brand small{display:none}.nav-links{order:3;position:absolute;top:66px;left:0;right:0;background:var(--navy2);padding:7px 10px}.page{padding:65px 12px 35px}.login-shell{padding-top:65px}.qr-layout{grid-template-columns:1fr}.grid-3,.grid-4{grid-template-columns:repeat(2,1fr)}.catalog-grid{grid-template-columns:1fr}.import-summary{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:600px){.brand b{font-size:.8rem}.session-box .icon-btn:first-of-type{display:none}.page-head{flex-direction:column}.page-head .btn-row{width:100%}.page-head .btn{flex:1}.kpi-grid{grid-template-columns:repeat(2,1fr)}.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.identity{padding:16px}.identity-grid{grid-template-columns:1fr}.status-summary{grid-template-columns:repeat(3,1fr)}.status-summary .summary-item{padding:9px}.status-summary b{font-size:1rem}.hero{padding:21px;align-items:flex-start;flex-direction:column}.hero h1{font-size:1.3rem}.modal-bg{padding:7px}.modal{border-radius:14px}.modal-body{padding:15px}.pdf-frame{height:66vh}.import-summary{grid-template-columns:repeat(2,1fr)}#connection-pill{display:none}}
+    @media print{body>*{display:none!important}#print-area{display:block!important}.app-nav,#connection-pill{display:none!important}}
+  </style>
+</head>
+<body>
+  <nav class="app-nav">
+    <div class="nav-inner">
+      <div class="brand">
+        <div class="brand-mark"><i class="fa-solid fa-graduation-cap"></i></div>
+        <div><b>KTMEX Training</b><small>Control de capacitación y DC3</small></div>
+      </div>
+      <div id="nav-links" class="nav-links hidden">
+        <button class="nav-btn" data-view="home" onclick="go('home')"><i class="fa-solid fa-house"></i>Inicio</button>
+        <button class="nav-btn" data-view="qr" onclick="go('qr')"><i class="fa-solid fa-qrcode"></i>Verificar QR</button>
+        <button class="nav-btn admin-only" data-view="trainings" onclick="go('trainings')"><i class="fa-solid fa-certificate"></i>Capacitaciones</button>
+        <button class="nav-btn admin-only" data-view="workers" onclick="go('workers')"><i class="fa-solid fa-helmet-safety"></i>Trabajadores</button>
+        <button class="nav-btn admin-only" data-view="import" onclick="go('import')"><i class="fa-solid fa-file-excel"></i>Importar Excel</button>
+        <button class="nav-btn admin-only" data-view="catalogs" onclick="go('catalogs')"><i class="fa-solid fa-list"></i>Catálogos</button>
+        <button class="nav-btn admin-only" data-view="users" onclick="go('users')"><i class="fa-solid fa-users-gear"></i>Usuarios</button>
+      </div>
+      <div id="session-box" class="session-box hidden">
+        <div class="avatar" id="session-avatar">TR</div>
+        <div class="session-meta"><b id="session-name">—</b><small id="session-role">—</small></div>
+        <button class="icon-btn" title="Cambiar contraseña" onclick="openPasswordModal()"><i class="fa-solid fa-key"></i></button>
+        <button class="icon-btn" title="Cerrar sesión" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i></button>
+      </div>
+    </div>
+  </nav>
+
+  <section id="view-login" class="view active">
+    <div class="login-shell">
+      <div class="card login-card">
+        <div class="login-logo"><i class="fa-solid fa-graduation-cap"></i></div>
+        <div class="eyebrow">Acceso seguro</div>
+        <h1>Capacitación y DC3</h1>
+        <p>Ingresa con la cuenta asignada a tu departamento para verificar el código QR del trabajador.</p>
+        <form onsubmit="performLogin(event)">
+          <div class="field"><label>Usuario</label><input id="login-user" class="inp" autocomplete="username" required></div>
+          <div class="field"><label>Contraseña</label><input id="login-password" class="inp" type="password" autocomplete="current-password" required></div>
+          <div id="login-error" class="notice notice-error hidden" style="margin-bottom:12px"></div>
+          <button id="login-button" class="btn btn-primary" style="width:100%" type="submit"><i class="fa-solid fa-right-to-bracket"></i>Ingresar</button>
+        </form>
+        <div class="login-foot">KTMEX · Sistema independiente con el modelo visual de Facilities</div>
+      </div>
+    </div>
+  </section>
+
+  <main class="page">
+    <section id="view-home" class="view">
+      <div class="hero">
+        <div><div class="eyebrow" style="color:#8AB4FF">KTMEX Training</div><h1 id="welcome-title">Bienvenido</h1><p id="welcome-text">Consulta la vigencia de las capacitaciones y sus documentos DC3.</p></div>
+        <div><button class="btn" onclick="go('qr')"><i class="fa-solid fa-qrcode"></i>Verificar un código QR</button></div>
+      </div>
+      <div id="admin-dashboard" class="admin-only">
+        <div class="kpi-grid">
+          <div class="kpi"><div class="kpi-icon bg-blue"><i class="fa-solid fa-helmet-safety"></i></div><b id="k-workers">—</b><span>TRABAJADORES ACTIVOS</span></div>
+          <div class="kpi"><div class="kpi-icon bg-purple"><i class="fa-solid fa-certificate"></i></div><b id="k-trainings">—</b><span>CAPACITACIONES</span></div>
+          <div class="kpi"><div class="kpi-icon bg-green"><i class="fa-solid fa-circle-check"></i></div><b id="k-valid">—</b><span>VIGENTES</span></div>
+          <div class="kpi"><div class="kpi-icon bg-amber"><i class="fa-solid fa-clock"></i></div><b id="k-soon">—</b><span>POR VENCER</span></div>
+          <div class="kpi"><div class="kpi-icon bg-red"><i class="fa-solid fa-circle-xmark"></i></div><b id="k-expired">—</b><span>VENCIDAS</span></div>
+          <div class="kpi"><div class="kpi-icon bg-slate"><i class="fa-solid fa-file-circle-xmark"></i></div><b id="k-missing-dc3">—</b><span>SIN DC3</span></div>
+          <div class="kpi"><div class="kpi-icon bg-slate"><i class="fa-solid fa-calendar-xmark"></i></div><b id="k-missing-date">—</b><span>SIN FECHA DEL CURSO</span></div>
+        </div>
+        <div class="grid-3">
+          <div class="card card-pad"><div class="kpi-icon bg-blue"><i class="fa-solid fa-qrcode"></i></div><div class="card-title"><div><h3>QR permanente</h3><p>El código pertenece al trabajador y no cambia al actualizar sus datos.</p></div></div><button class="btn btn-soft" onclick="go('workers')">Administrar QR</button></div>
+          <div class="card card-pad"><div class="kpi-icon bg-purple"><i class="fa-solid fa-file-pdf"></i></div><div class="card-title"><div><h3>DC3 en Drive</h3><p>PDF privados con control de sesión, visualización e impresión.</p></div></div><button class="btn btn-soft" onclick="go('trainings')">Ver capacitaciones</button></div>
+          <div class="card card-pad"><div class="kpi-icon bg-green"><i class="fa-solid fa-file-import"></i></div><div class="card-title"><div><h3>Importación controlada</h3><p>Revisa el Excel y confirma el estatus antes de escribir en la base.</p></div></div><button class="btn btn-soft" onclick="go('import')">Importar Excel</button></div>
+        </div>
+      </div>
+      <div id="query-home" class="card card-pad hidden">
+        <div class="card-title"><div><h2>Cuenta departamental de consulta</h2><p>Puede consultar cualquier trabajador escaneado y ver o imprimir su DC3.</p></div></div>
+        <div class="notice notice-info"><b>Acceso de solo consulta.</b> Los cambios de trabajadores, capacitaciones, estatus y archivos se realizan únicamente con una cuenta de Entrenamiento.</div>
+      </div>
+    </section>
+
+    <section id="view-qr" class="view">
+      <div class="page-head"><div><div class="eyebrow">Consulta operativa</div><h1>Verificar código QR</h1><p>Escanea la etiqueta del casco o pega el contenido del QR.</p></div></div>
+      <div class="qr-layout">
+        <div class="card scan-box">
+          <div class="card-title"><div><h2>Escáner</h2><p>La cámara requiere HTTPS y permiso del navegador.</p></div></div>
+          <div class="field"><label>Código QR</label><textarea id="qr-input" class="inp" rows="3" placeholder="Escanea o pega aquí el código…"></textarea></div>
+          <div class="btn-row" style="margin-top:10px"><button class="btn btn-primary" onclick="lookupQr()"><i class="fa-solid fa-magnifying-glass"></i>Consultar</button><button id="camera-button" class="btn btn-gray" onclick="toggleScanner()"><i class="fa-solid fa-camera"></i>Usar cámara</button></div>
+          <div id="scanner" class="scanner"><video id="scanner-video" playsinline muted></video><canvas id="scanner-canvas" class="hidden"></canvas><div class="scanner-line"></div></div>
+          <div class="qr-help"><b><i class="fa-solid fa-shield-halved"></i> Privacidad:</b> el QR contiene un token opaco, no el nombre ni los cursos. La aplicación consulta siempre la información actual.</div>
+        </div>
+        <div id="qr-result" class="card card-pad">
+          <div class="result-empty"><div><i class="fa-solid fa-qrcode"></i><br><b>Sin consulta activa</b><p style="font-size:.72rem">Escanea un QR para mostrar número de empleado, puesto, departamento, capacitaciones y DC3.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-trainings" class="view admin-only">
+      <div class="page-head"><div><div class="eyebrow">Administración</div><h1>Capacitaciones</h1><p>Actualiza fechas y estatus manual; visualiza o imprime la DC3 asociada.</p></div><div class="btn-row"><button class="btn btn-primary" onclick="openTrainingModal()"><i class="fa-solid fa-plus"></i>Agregar capacitación</button></div></div>
+      <div class="card card-pad">
+        <div class="toolbar">
+          <div class="field grow"><label>Buscar</label><div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input id="training-search" class="inp" placeholder="Empleado, nombre, puesto o curso…" oninput="renderTrainings()"></div></div>
+          <div class="field"><label>Departamento</label><select id="training-department" class="inp" onchange="renderTrainings()"><option value="">Todos</option></select></div>
+          <div class="field"><label>Estatus</label><select id="training-status" class="inp" onchange="renderTrainings()"><option value="">Todos</option><option>Vigente</option><option>Por vencer</option><option>Vencida</option><option>Sin definir</option></select></div>
+        </div>
+        <div class="table-wrap"><table class="table"><thead><tr><th>No.</th><th>Trabajador</th><th>Departamento / puesto</th><th>Curso</th><th>Fecha curso</th><th>Vigencia</th><th>Estatus</th><th>DC3</th><th>Acciones</th></tr></thead><tbody id="training-body"><tr><td colspan="9" class="empty-cell">Cargando…</td></tr></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="view-workers" class="view admin-only">
+      <div class="page-head"><div><div class="eyebrow">Administración</div><h1>Trabajadores y códigos QR</h1><p>El QR se genera una sola vez, pertenece al trabajador y puede reimprimirse al cambiar de casco.</p></div><button class="btn btn-primary" onclick="openWorkerModal()"><i class="fa-solid fa-user-plus"></i>Agregar trabajador</button></div>
+      <div class="card card-pad">
+        <div class="toolbar"><div class="field grow"><label>Buscar</label><div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input id="worker-search" class="inp" placeholder="Número, nombre, departamento o puesto…" oninput="renderWorkers()"></div></div></div>
+        <div class="table-wrap"><table class="table"><thead><tr><th>No. empleado</th><th>Nombre</th><th>Departamento</th><th>Puesto</th><th>QR</th><th>Acciones</th></tr></thead><tbody id="worker-body"><tr><td colspan="6" class="empty-cell">Cargando…</td></tr></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="view-import" class="view admin-only">
+      <div class="page-head"><div><div class="eyebrow">Carga inicial y actualizaciones</div><h1>Importar Excel de capacitación</h1><p>Compatible con NO, NOMBRE, DEPTO_EMP, PUESTO, CURSO, FECHA_CURSO, VIGENCIA y ESTATUS.</p></div></div>
+      <div class="grid-2">
+        <div class="card card-pad">
+          <div class="card-title"><div><h2>1. Selecciona el archivo</h2><p>Se procesa localmente y solo se envían las columnas necesarias.</p></div></div>
+          <div class="field"><label>Archivo .xlsx, .xls o .csv</label><input id="import-file" class="inp" type="file" accept=".xlsx,.xls,.csv" onchange="readImportFile(event)"></div>
+          <div class="field" style="margin-top:12px"><label>Si el Excel no contiene ESTATUS</label><select id="import-status-mode" class="inp" onchange="refreshImportStatuses()"><option value="SUGGEST">Sugerir según VIGENCIA y confirmar en esta pantalla</option><option value="Vigente">Marcar todas como Vigente</option><option value="Por vencer">Marcar todas como Por vencer</option><option value="Vencida">Marcar todas como Vencida</option></select><small>El sistema no cambiará el estatus automáticamente después de importar.</small></div>
+          <label style="display:flex;gap:8px;align-items:flex-start;margin-top:13px;font-size:.72rem;color:#475569"><input id="import-update-workers" type="checkbox" checked> Actualizar nombre, departamento y puesto cuando el No. de empleado ya exista.</label>
+        </div>
+        <div class="card card-pad">
+          <div class="card-title"><div><h2>Reglas de importación</h2><p>El No. de empleado es la llave del trabajador.</p></div></div>
+          <div class="notice notice-info"><b>QR estable:</b> un empleado nuevo recibe un token; si ya existe, conserva el mismo QR.</div>
+          <div class="notice notice-warn" style="margin-top:9px"><b>Fecha del curso:</b> si el archivo solo tiene VIGENCIA, la capacitación se importa, pero se marcará como pendiente de completar la fecha en la ventana Capacitaciones.</div>
+          <div class="notice notice-ok" style="margin-top:9px"><b>Sin duplicados:</b> se actualiza una coincidencia por No. de empleado + curso + vigencia.</div>
+        </div>
+      </div>
+      <div id="import-preview-card" class="card card-pad hidden" style="margin-top:15px">
+        <div class="card-title"><div><h2>2. Vista previa y confirmación</h2><p id="import-file-label">—</p></div></div>
+        <div id="import-summary" class="import-summary"></div>
+        <div id="import-warning" class="notice notice-warn hidden" style="margin-bottom:12px"></div>
+        <div class="table-wrap"><table class="table"><thead><tr><th>Fila</th><th>No.</th><th>Nombre</th><th>Departamento</th><th>Puesto</th><th>Curso</th><th>Fecha curso</th><th>Vigencia</th><th>Estatus a guardar</th></tr></thead><tbody id="import-body"></tbody></table></div>
+        <label style="display:flex;gap:8px;align-items:flex-start;margin-top:14px;font-size:.73rem;color:#334155"><input id="import-confirm" type="checkbox"> Confirmo que Entrenamiento revisó la vista previa y autoriza guardar estos estatus.</label>
+        <div class="btn-row" style="justify-content:flex-end;margin-top:12px"><button id="import-button" class="btn btn-primary" onclick="confirmImport()"><i class="fa-solid fa-file-import"></i>Importar a producción</button></div>
+      </div>
+    </section>
+
+    <section id="view-catalogs" class="view admin-only">
+      <div class="page-head"><div><div class="eyebrow">Configuración</div><h1>Catálogos</h1><p>Entrenamiento puede cargar la lista oficial de departamentos; los cursos también se agregan al importar.</p></div><button class="btn btn-primary" onclick="openDepartmentModal()"><i class="fa-solid fa-plus"></i>Agregar departamento</button></div>
+      <div class="catalog-grid">
+        <div class="card card-pad"><div class="card-title"><div><h2>Departamentos</h2><p id="department-count">0 elementos</p></div></div><div id="department-chips" class="chips"></div></div>
+        <div class="card card-pad"><div class="card-title"><div><h2>Cursos</h2><p id="course-count">0 elementos</p></div></div><div id="course-chips" class="chips"></div></div>
+      </div>
+    </section>
+
+    <section id="view-users" class="view admin-only">
+      <div class="page-head"><div><div class="eyebrow">Seguridad</div><h1>Usuarios departamentales</h1><p>Crea una cuenta compartida de consulta por departamento; cualquier trabajador escaneado puede consultarse.</p></div><button class="btn btn-primary" onclick="openUserModal()"><i class="fa-solid fa-user-plus"></i>Agregar cuenta</button></div>
+      <div class="card card-pad"><div class="table-wrap"><table class="table"><thead><tr><th>Usuario</th><th>Nombre</th><th>Departamento</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="user-body"><tr><td colspan="6" class="empty-cell">Cargando…</td></tr></tbody></table></div></div>
+    </section>
+  </main>
+
+  <div id="training-modal" class="modal-bg"><div class="modal"><div class="modal-head"><h3 id="training-modal-title">Agregar capacitación</h3><button class="modal-close" onclick="closeModal('training-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body">
+    <input id="training-id" type="hidden">
+    <div class="grid-2">
+      <div class="field full"><label>Trabajador *</label><select id="training-worker" class="inp"></select></div>
+      <div class="field full"><label>Curso *</label><input id="training-course" class="inp" list="course-list" placeholder="Ej. MONTACARGAS"><datalist id="course-list"></datalist></div>
+      <div class="field"><label>Fecha en que tomó el curso *</label><input id="training-date" class="inp" type="date"></div>
+      <div class="field"><label>Vigencia / vencimiento *</label><input id="training-expiry" class="inp" type="date"></div>
+      <div class="field"><label>Estatus manual *</label><select id="training-edit-status" class="inp"><option>Vigente</option><option>Por vencer</option><option>Vencida</option></select></div>
+      <div class="field"><label>Archivo DC3 (PDF)</label><input id="training-pdf" class="inp" type="file" accept="application/pdf"><small id="training-pdf-help">Máximo 8 MB. Si ya existe, se conservará en Histórico.</small></div>
+      <div class="field full"><label>Observaciones</label><textarea id="training-notes" class="inp"></textarea></div>
+    </div>
+  </div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('training-modal')">Cancelar</button><button id="training-save" class="btn btn-primary" onclick="saveTrainingUI()"><i class="fa-solid fa-floppy-disk"></i>Guardar</button></div></div></div>
+
+  <div id="worker-modal" class="modal-bg"><div class="modal"><div class="modal-head"><h3 id="worker-modal-title">Agregar trabajador</h3><button class="modal-close" onclick="closeModal('worker-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body">
+    <input id="worker-id" type="hidden"><div class="grid-2"><div class="field"><label>Número de empleado *</label><input id="worker-no" class="inp"></div><div class="field"><label>Nombre completo *</label><input id="worker-name" class="inp"></div><div class="field"><label>Departamento *</label><input id="worker-dept" class="inp" list="department-list"></div><div class="field"><label>Puesto *</label><input id="worker-position" class="inp"></div></div>
+    <div class="notice notice-info" style="margin-top:14px"><b>El QR no cambia.</b> Al editar nombre, departamento, puesto o capacitaciones, el mismo código mostrará la información actualizada.</div>
+  </div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('worker-modal')">Cancelar</button><button class="btn btn-primary" onclick="saveWorkerUI()"><i class="fa-solid fa-floppy-disk"></i>Guardar</button></div></div></div>
+
+  <div id="qr-label-modal" class="modal-bg"><div class="modal" style="max-width:470px"><div class="modal-head"><h3>Etiqueta QR del trabajador</h3><button class="modal-close" onclick="closeModal('qr-label-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body"><div id="qr-print-label" class="qr-print-label"><div style="font-size:.65rem;font-weight:800;color:#2563EB;letter-spacing:.12em">KTMEX TRAINING</div><div id="qr-code-box" class="qr-code-box"></div><h3 id="qr-label-name">—</h3><p>No. empleado <b id="qr-label-no">—</b></p><p style="margin-top:6px">Escanee e inicie sesión para consultar</p></div></div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('qr-label-modal')">Cerrar</button><button class="btn btn-primary" onclick="printQrLabel()"><i class="fa-solid fa-print"></i>Imprimir etiqueta</button></div></div></div>
+
+  <div id="dc3-modal" class="modal-bg"><div class="modal wide"><div class="modal-head"><div><h3 id="dc3-title">DC3</h3><div id="dc3-subtitle" style="font-size:.67rem;color:#64748B;margin-top:2px"></div></div><button class="modal-close" onclick="closeDc3Modal()"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body"><div id="dc3-loading" class="result-empty" style="min-height:320px"><div><i class="fa-solid fa-spinner spin"></i><br><b>Cargando PDF…</b></div></div><iframe id="dc3-frame" class="pdf-frame hidden" title="Vista previa DC3"></iframe></div><div class="modal-foot"><button class="btn btn-gray" onclick="closeDc3Modal()">Cerrar</button><button class="btn btn-soft" onclick="openCurrentDc3Tab()"><i class="fa-solid fa-up-right-from-square"></i>Abrir en pestaña</button><button class="btn btn-primary" onclick="printCurrentDc3()"><i class="fa-solid fa-print"></i>Imprimir DC3</button></div></div></div>
+
+  <div id="user-modal" class="modal-bg"><div class="modal"><div class="modal-head"><h3 id="user-modal-title">Agregar cuenta departamental</h3><button class="modal-close" onclick="closeModal('user-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body"><input id="user-id" type="hidden"><div class="grid-2"><div class="field"><label>Usuario *</label><input id="user-username" class="inp" placeholder="ej. consulta.maintenance"></div><div class="field"><label>Nombre de la cuenta *</label><input id="user-name" class="inp" placeholder="Consulta Maintenance"></div><div class="field"><label>Departamento *</label><input id="user-department" class="inp" list="department-list"></div><div class="field"><label>Rol *</label><select id="user-role" class="inp"><option value="consulta">Consulta departamental</option><option value="admin">Administrador Training</option></select></div><div id="user-password-field" class="field full"><label>Contraseña inicial *</label><input id="user-password" class="inp" type="password" autocomplete="new-password"><small>Mínimo 10 caracteres, mayúscula, minúscula, número y símbolo.</small></div></div></div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('user-modal')">Cancelar</button><button class="btn btn-primary" onclick="saveUserUI()"><i class="fa-solid fa-floppy-disk"></i>Guardar cuenta</button></div></div></div>
+
+  <div id="department-modal" class="modal-bg"><div class="modal" style="max-width:470px"><div class="modal-head"><h3>Agregar departamento</h3><button class="modal-close" onclick="closeModal('department-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body"><div class="field"><label>Nombre oficial *</label><input id="department-name" class="inp" placeholder="Ej. INTERNAL LOGISTICS"></div></div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('department-modal')">Cancelar</button><button class="btn btn-primary" onclick="saveDepartmentUI()">Guardar</button></div></div></div>
+
+  <div id="password-modal" class="modal-bg"><div class="modal" style="max-width:500px"><div class="modal-head"><h3>Cambiar contraseña</h3><button class="modal-close" onclick="closeModal('password-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body"><div id="password-required" class="notice notice-warn hidden" style="margin-bottom:12px"><b>Cambio requerido.</b> Sustituye la contraseña temporal antes de continuar.</div><div class="field"><label>Contraseña actual</label><input id="password-current" class="inp" type="password" autocomplete="current-password"></div><div class="field" style="margin-top:11px"><label>Nueva contraseña</label><input id="password-new" class="inp" type="password" autocomplete="new-password"><small>Mínimo 10 caracteres, mayúscula, minúscula, número y símbolo.</small></div></div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('password-modal')">Cancelar</button><button class="btn btn-primary" onclick="changePasswordUI()">Actualizar contraseña</button></div></div></div>
+
+  <div id="credential-modal" class="modal-bg"><div class="modal" style="max-width:500px"><div class="modal-head"><h3>Contraseña temporal</h3><button class="modal-close" onclick="closeModal('credential-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body"><div class="notice notice-warn"><b>Se muestra una sola vez.</b> Entrega esta contraseña por un canal seguro.</div><div class="field" style="margin-top:13px"><label>Usuario</label><input id="credential-user" class="inp" readonly></div><div class="field" style="margin-top:10px"><label>Contraseña temporal</label><input id="credential-password" class="inp mono" readonly></div></div><div class="modal-foot"><button class="btn btn-gray" onclick="copyCredential()"><i class="fa-solid fa-copy"></i>Copiar</button><button class="btn btn-primary" onclick="closeModal('credential-modal')">Listo</button></div></div></div>
+
+  <div id="loader" class="loader-bg"><div class="loader-card"><i class="fa-solid fa-spinner spin" style="color:#2563EB"></i><span id="loader-text">Procesando…</span></div></div>
+  <div id="toast"><i class="fa-solid fa-circle-check"></i><span id="toast-text"></span></div>
+  <div id="connection-pill"><i class="fa-solid fa-wifi"></i><span>En línea</span></div>
+
+  <script>
+    // Igual que Facilities: esta es la única línea que debe actualizarse después
+    // de implementar Code.gs como Aplicación web en Google Apps Script.
+    window.SCRIPT_URL = 'REEMPLAZA_CON_LA_URL_EXEC_DE_APPS_SCRIPT';
+
+    const $ = id => document.getElementById(id);
+    let SESSION = null;
+    let CURRENT_VIEW = 'login';
+    let WORKERS = [];
+    let TRAININGS = [];
+    let USERS = [];
+    let CATALOGS = {departments:[], courses:[]};
+    let IMPORT_ROWS = [];
+    let IMPORT_FILE_NAME = '';
+    let SCANNER_STREAM = null;
+    let SCANNER_FRAME = null;
+    let CURRENT_QR_WORKER = null;
+    let CURRENT_DC3 = null;
+    const DC3_CACHE = new Map();
+
+    document.addEventListener('DOMContentLoaded', initializeApp);
+    window.addEventListener('online', updateConnection);
+    window.addEventListener('offline', updateConnection);
+
+    async function initializeApp(){
+      updateConnection();
+      if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+      const stored = sessionStorage.getItem('ktmex_training_session');
+      if(stored){try{SESSION=JSON.parse(stored)}catch(e){SESSION=null}}
+      if(SESSION?.token){
+        try{
+          const r=await api({action:'validateSession',token:SESSION.token},false);
+          if(r.valid){SESSION.user=r.user;saveSession();enterApp();return}
+        }catch(e){}
+      }
+      SESSION=null;saveSession();showView('login');
+    }
+
+    function updateConnection(){
+      const pill=$('connection-pill');
+      const online=navigator.onLine;
+      pill.classList.toggle('offline',!online);
+      pill.innerHTML=online?'<i class="fa-solid fa-wifi"></i><span>En línea</span>':'<i class="fa-solid fa-wifi-slash"></i><span>Sin conexión</span>';
+    }
+
+    async function api(payload,handleSession=true){
+      if(!window.SCRIPT_URL || window.SCRIPT_URL.startsWith('REEMPLAZA_')) throw new Error('Configura window.SCRIPT_URL con la URL /exec de Apps Script.');
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),60000);
+      try{
+        const response=await fetch(window.SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),signal:controller.signal,redirect:'follow'});
+        const text=await response.text();
+        let data;try{data=JSON.parse(text)}catch(e){throw new Error('El backend no devolvió JSON válido. Verifica la URL /exec y la implementación.')}
+        if(handleSession && data.success===false && /sesión inválida|sesion invalida|expirada/i.test(data.error||'')){SESSION=null;saveSession();showView('login');toast('La sesión expiró. Ingresa nuevamente.','err')}
+        return data;
+      }catch(e){
+        if(e.name==='AbortError') throw new Error('La operación excedió el tiempo de espera.');
+        throw e;
+      }finally{clearTimeout(timer)}
+    }
+
+    function saveSession(){if(SESSION)sessionStorage.setItem('ktmex_training_session',JSON.stringify(SESSION));else sessionStorage.removeItem('ktmex_training_session')}
+    function isAdmin(){return SESSION?.user?.role==='admin'}
+    function enterApp(){
+      $('nav-links').classList.remove('hidden');$('session-box').classList.remove('hidden');
+      document.querySelectorAll('.admin-only').forEach(el=>el.classList.toggle('hidden',!isAdmin()));
+      $('session-name').textContent=SESSION.user.name||SESSION.user.username;
+      $('session-role').textContent=(isAdmin()?'Administrador Training':'Consulta')+' · '+(SESSION.user.department||'Sin departamento');
+      $('session-avatar').textContent=initials(SESSION.user.name||SESSION.user.username);
+      $('welcome-title').textContent='Bienvenido, '+firstName(SESSION.user.name||SESSION.user.username);
+      $('welcome-text').textContent=isAdmin()?'Administra trabajadores, capacitaciones, estatus manuales y documentos DC3.':'Escanea el QR del trabajador para consultar sus capacitaciones y documentos DC3.';
+      $('query-home').classList.toggle('hidden',isAdmin());
+      const pending=new URLSearchParams(location.search).get('qr');
+      if(pending){go('qr');$('qr-input').value=pending;setTimeout(lookupQr,80)}else go(isAdmin()?'home':'qr');
+      if(SESSION.user.mustChangePassword)setTimeout(()=>openPasswordModal(true),250);
+    }
+
+    async function performLogin(event){
+      event.preventDefault();
+      const username=$('login-user').value.trim(),password=$('login-password').value;
+      const btn=$('login-button');btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner spin"></i>Ingresando…';
+      $('login-error').classList.add('hidden');
+      try{
+        const r=await api({action:'login',username,password},false);
+        if(!r.success){$('login-error').textContent=r.error||'Acceso no autorizado.';$('login-error').classList.remove('hidden');return}
+        SESSION={token:r.token,user:r.user,expiresAt:r.expiresAt};saveSession();$('login-password').value='';enterApp();toast('Bienvenido, '+(r.user.name||r.user.username),'ok');
+      }catch(e){$('login-error').textContent=e.message;$('login-error').classList.remove('hidden')}
+      finally{btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-right-to-bracket"></i>Ingresar'}
+    }
+
+    async function logout(){
+      stopScanner();DC3_CACHE.forEach(item=>{try{URL.revokeObjectURL(item.url)}catch(e){}});DC3_CACHE.clear();const token=SESSION?.token;SESSION=null;saveSession();WORKERS=[];TRAININGS=[];USERS=[];CATALOGS={departments:[],courses:[]};
+      $('nav-links').classList.add('hidden');$('session-box').classList.add('hidden');showView('login');
+      if(token)api({action:'logout',token},false).catch(()=>{});
+    }
+
+    function showView(name){
+      CURRENT_VIEW=name;
+      document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+      const view=$('view-'+name);if(view)view.classList.add('active');
+      document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
+      if(name!=='qr')stopScanner();
+    }
+
+    async function go(name){
+      if(!SESSION){showView('login');return}
+      const adminViews=['trainings','workers','import','catalogs','users'];
+      if(adminViews.includes(name)&&!isAdmin()){toast('Tu cuenta es de consulta.','err');return}
+      showView(name);
+      try{
+        if(name==='home'&&isAdmin())await loadDashboard();
+        if(name==='trainings')await loadTrainings();
+        if(name==='workers')await loadWorkers();
+        if(name==='catalogs')await loadCatalogs();
+        if(name==='users')await loadUsers();
+      }catch(e){toast(e.message,'err')}
+    }
+
+    async function loadDashboard(){
+      const r=await api({action:'getDashboard',token:SESSION.token});if(!r.success)throw new Error(r.error);
+      const t=r.totals||{};
+      $('k-workers').textContent=t.workers??0;$('k-trainings').textContent=t.trainings??0;$('k-valid').textContent=t.vigente??0;$('k-soon').textContent=t.porVencer??0;$('k-expired').textContent=t.vencida??0;$('k-missing-dc3').textContent=t.missingDc3??0;$('k-missing-date').textContent=t.missingCourseDate??0;
+    }
+
+    // ── QR ───────────────────────────────────────────────────────────────────
+    async function lookupQr(){
+      const qr=$('qr-input').value.trim();if(!qr){toast('Escanea o pega un código QR.','err');return}
+      stopScanner();showLoader('Consultando expediente…');
+      try{
+        const r=await api({action:'lookupQr',token:SESSION.token,qr});
+        if(!r.success){renderQrError(r.error);return}
+        renderQrResult(r);
+      }catch(e){renderQrError(e.message)}finally{hideLoader()}
+    }
+
+    function renderQrError(message){$('qr-result').innerHTML=`<div class="result-empty"><div><i class="fa-solid fa-circle-exclamation" style="color:#F87171"></i><br><b>No fue posible verificar el QR</b><p style="font-size:.72rem">${esc(message)}</p></div></div>`}
+
+    function renderQrResult(data){
+      const w=data.worker,c=data.counts||{};CURRENT_QR_WORKER=w;
+      const groups=[['Vigentes','vigente','status-vigente'],['Por vencer','por-vencer','status-por-vencer'],['Vencidas','vencida','status-vencida']];
+      $('qr-result').innerHTML=`
+        <div class="identity"><div style="min-width:0;flex:1"><div style="font-size:.62rem;color:#8AB4FF;font-weight:800;letter-spacing:.1em">QR VERIFICADO</div><h2>${esc(w.name)}</h2><p>Expediente de capacitación actualizado</p><div class="identity-grid"><div class="identity-item"><span>No. empleado</span><b class="mono">${esc(w.employeeNo)}</b></div><div class="identity-item"><span>Puesto</span><b>${esc(w.position)}</b></div><div class="identity-item"><span>Departamento</span><b>${esc(w.department)}</b></div></div></div><div style="font-size:36px;color:#60A5FA"><i class="fa-solid fa-circle-check"></i></div></div>
+        <div class="status-summary"><div class="summary-item"><b style="color:#16A34A">${c.vigente||0}</b><span>VIGENTES</span></div><div class="summary-item"><b style="color:#D97706">${c.porVencer||0}</b><span>POR VENCER</span></div><div class="summary-item"><b style="color:#DC2626">${c.vencida||0}</b><span>VENCIDAS</span></div></div>
+        ${groups.map(([title,key,cls])=>renderTrainingGroup(title,key,cls,data.trainings||[])).join('')}
+        ${(data.trainings||[]).some(t=>t.statusKey==='sin-definir')?renderTrainingGroup('Sin definir','sin-definir','status-sin-definir',data.trainings||[]):''}`;
+    }
+
+    function renderTrainingGroup(title,key,cls,trainings){
+      const rows=trainings.filter(t=>t.statusKey===key);
+      return `<div class="training-section"><div class="training-section-head"><span class="badge ${cls}">${esc(title)}</span><h3>${rows.length} capacitación(es)</h3></div>${rows.length?`<div class="training-cards">${rows.map(renderTrainingCard).join('')}</div>`:'<div class="section-empty">No hay capacitaciones en esta categoría.</div>'}</div>`;
+    }
+
+    function renderTrainingCard(t){
+      return `<div class="training-card"><div class="training-card-head"><h4>${esc(t.course)}</h4><span class="badge status-${esc(t.statusKey)}">${esc(t.status)}</span></div><div class="training-meta"><div><span>Fecha del curso</span><b>${fmtDate(t.dateTaken)}</b></div><div><span>Vigencia</span><b>${fmtDate(t.expiryDate)}</b></div></div><div class="btn-row">${t.hasDc3?`<button class="btn btn-soft btn-sm" onclick="openDc3('${t.id}')"><i class="fa-solid fa-file-pdf"></i>Ver DC3</button><button class="btn btn-gray btn-sm" onclick="printDc3('${t.id}')"><i class="fa-solid fa-print"></i>Imprimir</button>`:'<span class="badge badge-none"><i class="fa-solid fa-file-circle-xmark"></i>DC3 no disponible</span>'}</div></div>`;
+    }
+
+    async function toggleScanner(){if(SCANNER_STREAM){stopScanner();return}await startScanner()}
+    async function startScanner(){
+      if(!navigator.mediaDevices?.getUserMedia){toast('Este navegador no permite usar la cámara.','err');return}
+      try{
+        SCANNER_STREAM=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
+        const video=$('scanner-video');video.srcObject=SCANNER_STREAM;await video.play();$('scanner').classList.add('active');$('camera-button').innerHTML='<i class="fa-solid fa-stop"></i>Detener cámara';scanFrame();
+      }catch(e){SCANNER_STREAM=null;toast('No fue posible abrir la cámara. Revisa el permiso y usa HTTPS.','err')}
+    }
+    function scanFrame(){
+      if(!SCANNER_STREAM)return;const video=$('scanner-video'),canvas=$('scanner-canvas'),ctx=canvas.getContext('2d',{willReadFrequently:true});
+      if(video.readyState===video.HAVE_ENOUGH_DATA){canvas.width=video.videoWidth;canvas.height=video.videoHeight;ctx.drawImage(video,0,0,canvas.width,canvas.height);const image=ctx.getImageData(0,0,canvas.width,canvas.height);const code=window.jsQR?jsQR(image.data,image.width,image.height,{inversionAttempts:'dontInvert'}):null;if(code?.data){$('qr-input').value=code.data;stopScanner();lookupQr();return}}
+      SCANNER_FRAME=requestAnimationFrame(scanFrame);
+    }
+    function stopScanner(){if(SCANNER_FRAME)cancelAnimationFrame(SCANNER_FRAME);SCANNER_FRAME=null;if(SCANNER_STREAM)SCANNER_STREAM.getTracks().forEach(t=>t.stop());SCANNER_STREAM=null;if($('scanner'))$('scanner').classList.remove('active');if($('camera-button'))$('camera-button').innerHTML='<i class="fa-solid fa-camera"></i>Usar cámara'}
+
+    // ── DC3 ──────────────────────────────────────────────────────────────────
+    async function getDc3Object(trainingId){
+      const cached=DC3_CACHE.get(trainingId);if(cached&&Date.now()-cached.created<15*60*1000)return cached;if(cached){try{URL.revokeObjectURL(cached.url)}catch(e){}DC3_CACHE.delete(trainingId)}
+      const r=await api({action:'getDc3',token:SESSION.token,trainingId});if(!r.success)throw new Error(r.error);
+      const binary=atob(r.base64);const bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+      const url=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));const obj={url,name:r.fileName||'DC3.pdf',trainingId,created:Date.now()};DC3_CACHE.set(trainingId,obj);return obj;
+    }
+    async function openDc3(trainingId){
+      CURRENT_DC3=null;$('dc3-title').textContent='DC3';$('dc3-subtitle').textContent='';$('dc3-loading').innerHTML='<div><i class="fa-solid fa-spinner spin"></i><br><b>Cargando PDF…</b></div>';$('dc3-loading').classList.remove('hidden');$('dc3-frame').classList.add('hidden');$('dc3-frame').src='about:blank';openModal('dc3-modal');
+      try{CURRENT_DC3=await getDc3Object(trainingId);$('dc3-title').textContent=CURRENT_DC3.name;$('dc3-subtitle').textContent='Documento protegido por sesión';$('dc3-frame').src=CURRENT_DC3.url;$('dc3-frame').classList.remove('hidden');$('dc3-loading').classList.add('hidden')}catch(e){$('dc3-loading').innerHTML=`<div><i class="fa-solid fa-circle-exclamation" style="color:#F87171"></i><br><b>No fue posible abrir la DC3</b><p style="font-size:.72rem">${esc(e.message)}</p></div>`}
+    }
+    async function printDc3(trainingId){try{showLoader('Preparando DC3 para impresión…');const obj=await getDc3Object(trainingId);CURRENT_DC3=obj;await registerPrint(trainingId);printPdfObject(obj)}catch(e){toast(e.message,'err')}finally{hideLoader()}}
+    async function registerPrint(trainingId){const r=await api({action:'registerDc3Print',token:SESSION.token,trainingId});if(!r.success)throw new Error(r.error)}
+    function printPdfObject(obj){
+      const frame=document.createElement('iframe');frame.style.cssText='position:fixed;width:1px;height:1px;right:0;bottom:0;border:0;opacity:0';frame.src=obj.url;document.body.appendChild(frame);
+      frame.onload=()=>setTimeout(()=>{try{frame.contentWindow.focus();frame.contentWindow.print();toast('Se abrió el diálogo de impresión.','ok')}catch(e){window.open(obj.url,'_blank');toast('El navegador abrió la DC3; usa su botón Imprimir.','info')}setTimeout(()=>frame.remove(),90000)},600);
+    }
+    function openCurrentDc3Tab(){if(!CURRENT_DC3){toast('Espera a que termine de cargar la DC3.','err');return}window.open(CURRENT_DC3.url,'_blank','noopener')}
+    async function printCurrentDc3(){if(!CURRENT_DC3){toast('Espera a que termine de cargar la DC3.','err');return}try{await registerPrint(CURRENT_DC3.trainingId);printPdfObject(CURRENT_DC3)}catch(e){toast(e.message,'err')}}
+    function closeDc3Modal(){$('dc3-frame').src='about:blank';closeModal('dc3-modal')}
+
+    // ── Capacitaciones ────────────────────────────────────────────────────────
+    async function loadTrainings(){
+      const [tr,wr,cr]=await Promise.all([api({action:'listTrainings',token:SESSION.token}),api({action:'listWorkers',token:SESSION.token}),api({action:'listCatalogs',token:SESSION.token})]);
+      if(!tr.success)throw new Error(tr.error);if(!wr.success)throw new Error(wr.error);if(!cr.success)throw new Error(cr.error);
+      TRAININGS=tr.trainings||[];WORKERS=wr.workers||[];CATALOGS=cr;fillCatalogControls();renderTrainings();
+    }
+    function renderTrainings(){
+      const q=normalize($('training-search')?.value),dept=$('training-department')?.value||'',status=$('training-status')?.value||'';
+      const rows=TRAININGS.filter(t=>(!q||normalize([t.employeeNo,t.workerName,t.department,t.position,t.course].join(' ')).includes(q))&&(!dept||t.department===dept)&&(!status||t.status===status));
+      $('training-body').innerHTML=rows.length?rows.map(t=>`<tr><td class="mono nowrap">${esc(t.employeeNo)}</td><td><b>${esc(t.workerName)}</b></td><td><b>${esc(t.department)}</b><br><span style="color:#64748B">${esc(t.position)}</span></td><td><b>${esc(t.course)}</b></td><td class="nowrap">${fmtDate(t.dateTaken)}</td><td class="nowrap">${fmtDate(t.expiryDate)}</td><td><span class="badge status-${esc(t.statusKey)}">${esc(t.status)}</span></td><td>${t.hasDc3?'<span class="badge badge-dc3"><i class="fa-solid fa-file-pdf"></i>Disponible</span>':'<span class="badge badge-none">Pendiente</span>'}</td><td><div class="btn-row">${t.hasDc3?`<button class="btn btn-soft btn-sm" title="Ver DC3" onclick="openDc3('${t.id}')"><i class="fa-solid fa-eye"></i></button><button class="btn btn-gray btn-sm" title="Imprimir DC3" onclick="printDc3('${t.id}')"><i class="fa-solid fa-print"></i></button>`:''}<button class="btn btn-gray btn-sm" title="Editar" onclick="openTrainingModal('${t.id}')"><i class="fa-solid fa-pen"></i></button></div></td></tr>`).join(''):'<tr><td colspan="9" class="empty-cell">No hay capacitaciones con esos filtros.</td></tr>';
+    }
+    function openTrainingModal(id=''){
+      const t=TRAININGS.find(x=>x.id===id);$('training-id').value=t?.id||'';$('training-modal-title').textContent=t?'Editar capacitación':'Agregar capacitación';
+      $('training-worker').innerHTML='<option value="">— Selecciona —</option>'+WORKERS.map(w=>`<option value="${attr(w.id)}">${esc(w.employeeNo)} · ${esc(w.name)}</option>`).join('');
+      $('training-worker').value=t?.workerId||'';$('training-course').value=t?.course||'';$('training-date').value=t?.dateTaken||'';$('training-expiry').value=t?.expiryDate||'';$('training-edit-status').value=['Vigente','Por vencer','Vencida'].includes(t?.status)?t.status:'Vigente';$('training-notes').value=t?.notes||'';$('training-pdf').value='';
+      $('training-pdf-help').textContent=(t?.hasDc3?'Ya existe una DC3; al subir otra, la anterior pasa a Histórico. ':'')+'Máximo 8 MB.';openModal('training-modal');
+    }
+    async function saveTrainingUI(){
+      const file=$('training-pdf').files[0];if(file&&(file.type!=='application/pdf'||!/\.pdf$/i.test(file.name))){toast('La DC3 debe ser PDF.','err');return}if(file&&file.size>8*1024*1024){toast('El PDF excede 8 MB.','err');return}
+      const payload={action:'saveTraining',token:SESSION.token,id:$('training-id').value,workerId:$('training-worker').value,course:$('training-course').value,dateTaken:$('training-date').value,expiryDate:$('training-expiry').value,status:$('training-edit-status').value,notes:$('training-notes').value};
+      const btn=$('training-save');btn.disabled=true;showLoader('Guardando capacitación…');
+      try{
+        const r=await api(payload);if(!r.success)throw new Error(r.error);
+        if(file){$('loader-text').textContent='Subiendo DC3 privada a Drive…';const base64=await fileToDataUrl(file);const up=await api({action:'uploadDc3',token:SESSION.token,trainingId:r.trainingId,fileName:file.name,base64});if(!up.success)throw new Error('La capacitación se guardó, pero la DC3 no: '+up.error)}
+        closeModal('training-modal');toast('Capacitación guardada.','ok');await loadTrainings();
+      }catch(e){toast(e.message,'err')}finally{hideLoader();btn.disabled=false}
+    }
+
+    // ── Trabajadores y QR ─────────────────────────────────────────────────────
+    async function loadWorkers(){const [r,c]=await Promise.all([api({action:'listWorkers',token:SESSION.token}),api({action:'listCatalogs',token:SESSION.token})]);if(!r.success)throw new Error(r.error);WORKERS=r.workers||[];if(c.success){CATALOGS=c;fillCatalogControls()}renderWorkers()}
+    function renderWorkers(){
+      const q=normalize($('worker-search')?.value);const rows=WORKERS.filter(w=>!q||normalize([w.employeeNo,w.name,w.department,w.position].join(' ')).includes(q));
+      $('worker-body').innerHTML=rows.length?rows.map(w=>`<tr><td class="mono"><b>${esc(w.employeeNo)}</b></td><td><b>${esc(w.name)}</b></td><td>${esc(w.department)}</td><td>${esc(w.position)}</td><td><button class="btn btn-soft btn-sm" onclick="openQrLabel('${w.id}')"><i class="fa-solid fa-qrcode"></i>Ver / imprimir</button></td><td><button class="btn btn-gray btn-sm" onclick="openWorkerModal('${w.id}')"><i class="fa-solid fa-pen"></i>Editar</button></td></tr>`).join(''):'<tr><td colspan="6" class="empty-cell">No hay trabajadores con ese filtro.</td></tr>';
+    }
+    function openWorkerModal(id=''){const w=WORKERS.find(x=>x.id===id);$('worker-id').value=w?.id||'';$('worker-modal-title').textContent=w?'Editar trabajador':'Agregar trabajador';$('worker-no').value=w?.employeeNo||'';$('worker-name').value=w?.name||'';$('worker-dept').value=w?.department||'';$('worker-position').value=w?.position||'';openModal('worker-modal')}
+    async function saveWorkerUI(){showLoader('Guardando trabajador…');try{const r=await api({action:'saveWorker',token:SESSION.token,id:$('worker-id').value,employeeNo:$('worker-no').value,name:$('worker-name').value,department:$('worker-dept').value,position:$('worker-position').value});if(!r.success)throw new Error(r.error);closeModal('worker-modal');toast('Trabajador guardado; su QR permanece estable.','ok');await loadWorkers()}catch(e){toast(e.message,'err')}finally{hideLoader()}}
+    function openQrLabel(id){const w=WORKERS.find(x=>x.id===id);if(!w)return;CURRENT_QR_WORKER=w;$('qr-label-name').textContent=w.name;$('qr-label-no').textContent=w.employeeNo;$('qr-code-box').innerHTML='';new QRCode($('qr-code-box'),{text:qrPayloadFor(w.qrToken),width:220,height:220,colorDark:'#0A1628',colorLight:'#FFFFFF',correctLevel:QRCode.CorrectLevel.H});openModal('qr-label-modal')}
+    function qrPayloadFor(token){if(location.protocol==='http:'||location.protocol==='https:'){const base=location.origin+location.pathname;return base+'?qr='+encodeURIComponent(token)}return 'KTMEX-TRN:'+token}
+    function printQrLabel(){
+      if(!CURRENT_QR_WORKER)return;const canvas=$('qr-code-box').querySelector('canvas'),img=$('qr-code-box').querySelector('img');const src=canvas?.toDataURL('image/png')||img?.src;if(!src){toast('El QR todavía no termina de generarse.','err');return}
+      const win=window.open('','_blank','width=500,height=650');if(!win){toast('Permite ventanas emergentes para imprimir.','err');return}win.document.write(`<!doctype html><html><head><title>QR ${esc(CURRENT_QR_WORKER.employeeNo)}</title><style>body{font-family:Arial;text-align:center;padding:30px;color:#0A1628}.label{border:2px solid #0A1628;border-radius:16px;padding:20px;display:inline-block;max-width:340px}img{width:250px;height:250px}h2{font-size:18px;margin:10px 0 4px}p{font-size:12px;margin:4px}.top{font-size:11px;font-weight:bold;letter-spacing:2px;color:#2563EB}@media print{button{display:none}}</style></head><body><div class="label"><div class="top">KTMEX TRAINING</div><img src="${src}"><h2>${esc(CURRENT_QR_WORKER.name)}</h2><p>No. empleado <b>${esc(CURRENT_QR_WORKER.employeeNo)}</b></p><p>Escanee e inicie sesión para consultar</p></div><br><button onclick="window.print()">Imprimir</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`);win.document.close();
+    }
+
+    // ── Importación ───────────────────────────────────────────────────────────
+    async function readImportFile(event){
+      const file=event.target.files[0];if(!file)return;IMPORT_FILE_NAME=file.name;showLoader('Leyendo Excel…');
+      try{
+        const buffer=await file.arrayBuffer();const workbook=XLSX.read(buffer,{type:'array',cellDates:true});const sheet=workbook.Sheets[workbook.SheetNames[0]];const matrix=XLSX.utils.sheet_to_json(sheet,{header:1,defval:'',raw:true});
+        IMPORT_ROWS=parseImportMatrix(matrix);if(!IMPORT_ROWS.length)throw new Error('No se encontraron filas válidas con los encabezados requeridos.');refreshImportStatuses();$('import-preview-card').classList.remove('hidden');$('import-file-label').textContent=file.name+' · Hoja: '+workbook.SheetNames[0];$('import-confirm').checked=false;$('import-preview-card').scrollIntoView({behavior:'smooth',block:'start'});
+      }catch(e){IMPORT_ROWS=[];$('import-preview-card').classList.add('hidden');toast(e.message,'err')}finally{hideLoader()}
+    }
+    function parseImportMatrix(matrix){
+      const headerIndex=matrix.slice(0,15).findIndex(row=>row.some(v=>headerKey(v)==='NO')&&row.some(v=>headerKey(v)==='NOMBRE'));
+      if(headerIndex<0)throw new Error('No se encontró una fila de encabezados con NO y NOMBRE.');
+      const headers=matrix[headerIndex].map(headerKey);const indexFor=names=>{for(const n of names){const i=headers.indexOf(n);if(i>=0)return i}return -1};
+      const idx={no:indexFor(['NO','NUMERO DE EMPLEADO','NUMERO EMPLEADO','EMPLOYEE NO']),name:indexFor(['NOMBRE','NOMBRE DEL TRABAJADOR','EMPLEADO']),dept:indexFor(['DEPTO EMP','DEPARTAMENTO','DEPTO','DEPARTMENT']),position:indexFor(['PUESTO','POSITION']),course:indexFor(['CURSO','CAPACITACION','COURSE']),date:indexFor(['FECHA CURSO','FECHA DEL CURSO','FECHA CAPACITACION','FECHA CUANDO TOMO EL CURSO']),expiry:indexFor(['VIGENCIA','FECHA VENCIMIENTO','VENCIMIENTO','EXPIRY']),status:indexFor(['ESTATUS','STATUS'])};
+      const required=['no','name','dept','position','course','expiry'];const missing=required.filter(k=>idx[k]<0);if(missing.length)throw new Error('Faltan columnas requeridas: '+missing.join(', '));
+      return matrix.slice(headerIndex+1).map((row,i)=>({sourceRow:headerIndex+i+2,employeeNo:cellText(row[idx.no]).replace(/\.0$/,''),name:cellText(row[idx.name]),department:cellText(row[idx.dept]),position:cellText(row[idx.position]),course:cellText(row[idx.course]),dateTaken:idx.date>=0?excelDate(row[idx.date]):'',expiryDate:excelDate(row[idx.expiry]),sourceStatus:idx.status>=0?normalizeStatusClient(row[idx.status]):''})).filter(r=>r.employeeNo||r.name||r.course);
+    }
+    function refreshImportStatuses(){
+      if(!IMPORT_ROWS.length)return;const mode=$('import-status-mode').value;IMPORT_ROWS.forEach(r=>r.status=r.sourceStatus||(mode==='SUGGEST'?suggestStatusClient(r.expiryDate):mode));renderImportPreview();
+    }
+    function renderImportPreview(){
+      const invalid=IMPORT_ROWS.filter(r=>!r.employeeNo||!r.name||!r.department||!r.position||!r.course||!r.expiryDate);const missingDate=IMPORT_ROWS.filter(r=>!r.dateTaken).length;const counts={};IMPORT_ROWS.forEach(r=>counts[r.status]=(counts[r.status]||0)+1);
+      $('import-summary').innerHTML=[['Registros',IMPORT_ROWS.length],['Vigentes',counts['Vigente']||0],['Por vencer',counts['Por vencer']||0],['Vencidas',counts['Vencida']||0],['Sin fecha curso',missingDate]].map(([l,v])=>`<div class="import-stat"><b>${v}</b><span>${l.toUpperCase()}</span></div>`).join('');
+      const warning=[];if(invalid.length)warning.push(invalid.length+' fila(s) incompleta(s) se reportarán como error.');if(missingDate)warning.push(missingDate+' fila(s) no tienen FECHA_CURSO; deberán completarse posteriormente.');$('import-warning').textContent=warning.join(' ');$('import-warning').classList.toggle('hidden',!warning.length);
+      $('import-body').innerHTML=IMPORT_ROWS.slice(0,50).map(r=>`<tr><td>${r.sourceRow}</td><td class="mono">${esc(r.employeeNo)}</td><td>${esc(r.name)}</td><td>${esc(r.department)}</td><td>${esc(r.position)}</td><td>${esc(r.course)}</td><td>${fmtDate(r.dateTaken)}</td><td>${fmtDate(r.expiryDate)}</td><td><span class="badge status-${statusKeyClient(r.status)}">${esc(r.status||'Sin definir')}</span></td></tr>`).join('')+(IMPORT_ROWS.length>50?`<tr><td colspan="9" class="empty-cell">Se muestran 50 de ${IMPORT_ROWS.length} filas. Todas serán procesadas.</td></tr>`:'');
+    }
+    async function confirmImport(){
+      if(!IMPORT_ROWS.length){toast('Selecciona un archivo.','err');return}if(!$('import-confirm').checked){toast('Confirma que Entrenamiento revisó la vista previa.','err');return}
+      const btn=$('import-button');btn.disabled=true;showLoader('Importando trabajadores y capacitaciones…');
+      try{const r=await api({action:'importTrainingRows',token:SESSION.token,fileName:IMPORT_FILE_NAME,updateWorkerData:$('import-update-workers').checked,rows:IMPORT_ROWS});if(!r.success)throw new Error(r.error);toast(`Importación lista: ${r.workersCreated} trabajador(es) y ${r.trainingsCreated} capacitación(es) nuevas. ${r.errors.length} error(es).`,r.errors.length?'info':'ok');$('import-confirm').checked=false;WORKERS=[];TRAININGS=[];await loadDashboard()}catch(e){toast(e.message,'err')}finally{hideLoader();btn.disabled=false}
+    }
+
+    // ── Catálogos ─────────────────────────────────────────────────────────────
+    async function loadCatalogs(){const r=await api({action:'listCatalogs',token:SESSION.token});if(!r.success)throw new Error(r.error);CATALOGS=r;fillCatalogControls();renderCatalogs()}
+    function fillCatalogControls(){
+      const departments=CATALOGS.departments||[],courses=CATALOGS.courses||[];
+      if($('department-list'))$('department-list').remove();const dl=document.createElement('datalist');dl.id='department-list';dl.innerHTML=departments.map(x=>`<option value="${attr(x.name)}"></option>`).join('');document.body.appendChild(dl);
+      if($('course-list'))$('course-list').innerHTML=courses.map(x=>`<option value="${attr(x.name)}"></option>`).join('');
+      if($('training-department')){const old=$('training-department').value;$('training-department').innerHTML='<option value="">Todos</option>'+departments.map(x=>`<option>${esc(x.name)}</option>`).join('');$('training-department').value=old}
+    }
+    function renderCatalogs(){const d=CATALOGS.departments||[],c=CATALOGS.courses||[];$('department-count').textContent=d.length+' elementos';$('course-count').textContent=c.length+' elementos';$('department-chips').innerHTML=d.length?d.map(x=>`<span class="chip">${esc(x.name)}</span>`).join(''):'<span style="color:#94A3B8;font-size:.72rem">Sin departamentos.</span>';$('course-chips').innerHTML=c.length?c.map(x=>`<span class="chip">${esc(x.name)}</span>`).join(''):'<span style="color:#94A3B8;font-size:.72rem">Los cursos aparecerán al crear o importar capacitaciones.</span>'}
+    function openDepartmentModal(){$('department-name').value='';openModal('department-modal')}
+    async function saveDepartmentUI(){const name=$('department-name').value.trim();if(!name){toast('Escribe el nombre.','err');return}showLoader('Guardando departamento…');try{const r=await api({action:'saveDepartment',token:SESSION.token,name});if(!r.success)throw new Error(r.error);closeModal('department-modal');toast('Departamento guardado.','ok');await loadCatalogs()}catch(e){toast(e.message,'err')}finally{hideLoader()}}
+
+    // ── Usuarios ──────────────────────────────────────────────────────────────
+    async function loadUsers(){const [ur,cr]=await Promise.all([api({action:'listUsers',token:SESSION.token}),api({action:'listCatalogs',token:SESSION.token})]);if(!ur.success)throw new Error(ur.error);USERS=ur.users||[];if(cr.success){CATALOGS=cr;fillCatalogControls()}renderUsers()}
+    function renderUsers(){$('user-body').innerHTML=USERS.length?USERS.map(u=>`<tr><td class="mono"><b>${esc(u.username)}</b></td><td>${esc(u.name)}</td><td>${esc(u.department)}</td><td><span class="badge ${u.role==='admin'?'badge-dc3':'badge-none'}">${u.role==='admin'?'Administrador':'Consulta'}</span></td><td><span class="badge ${u.active?'status-vigente':'status-vencida'}">${u.active?'Activo':'Inactivo'}</span></td><td><div class="btn-row"><button class="btn btn-gray btn-sm" title="Editar" onclick="openUserModal('${u.id}')"><i class="fa-solid fa-pen"></i></button><button class="btn btn-soft btn-sm" title="Restablecer contraseña" onclick="resetUserPassword('${u.id}')"><i class="fa-solid fa-key"></i></button><button class="btn ${u.active?'btn-red':'btn-green'} btn-sm" onclick="toggleUser('${u.id}',${!u.active})">${u.active?'Desactivar':'Activar'}</button></div></td></tr>`).join(''):'<tr><td colspan="6" class="empty-cell">Sin usuarios.</td></tr>'}
+    function openUserModal(id=''){const u=USERS.find(x=>x.id===id);$('user-id').value=u?.id||'';$('user-modal-title').textContent=u?'Editar cuenta':'Agregar cuenta departamental';$('user-username').value=u?.username||'';$('user-name').value=u?.name||'';$('user-department').value=u?.department||'';$('user-role').value=u?.role||'consulta';$('user-password').value='';$('user-password-field').classList.toggle('hidden',Boolean(u));openModal('user-modal')}
+    async function saveUserUI(){showLoader('Guardando cuenta…');try{const r=await api({action:'saveUser',token:SESSION.token,id:$('user-id').value,username:$('user-username').value,name:$('user-name').value,department:$('user-department').value,role:$('user-role').value,password:$('user-password').value});if(!r.success)throw new Error(r.error);closeModal('user-modal');toast('Cuenta guardada.','ok');await loadUsers()}catch(e){toast(e.message,'err')}finally{hideLoader()}}
+    async function resetUserPassword(id){if(!confirm('¿Restablecer la contraseña de esta cuenta? Las otras sesiones se cerrarán.'))return;showLoader('Generando contraseña temporal…');try{const r=await api({action:'resetUserPassword',token:SESSION.token,id});if(!r.success)throw new Error(r.error);$('credential-user').value=r.username;$('credential-password').value=r.temporaryPassword;openModal('credential-modal')}catch(e){toast(e.message,'err')}finally{hideLoader()}}
+    async function toggleUser(id,active){if(!confirm((active?'¿Activar':'¿Desactivar')+' esta cuenta?'))return;try{const r=await api({action:'setUserActive',token:SESSION.token,id,active});if(!r.success)throw new Error(r.error);toast('Estado actualizado.','ok');await loadUsers()}catch(e){toast(e.message,'err')}}
+    function copyCredential(){const text='Usuario: '+$('credential-user').value+'\nContraseña temporal: '+$('credential-password').value;navigator.clipboard?.writeText(text).then(()=>toast('Credenciales copiadas.','ok')).catch(()=>toast('No fue posible copiar automáticamente.','err'))}
+
+    // ── Contraseña ────────────────────────────────────────────────────────────
+    function openPasswordModal(required=false){$('password-current').value='';$('password-new').value='';$('password-required').classList.toggle('hidden',!required);openModal('password-modal')}
+    async function changePasswordUI(){showLoader('Actualizando contraseña…');try{const r=await api({action:'changePassword',token:SESSION.token,currentPassword:$('password-current').value,newPassword:$('password-new').value});if(!r.success)throw new Error(r.error);SESSION.user.mustChangePassword=false;saveSession();closeModal('password-modal');toast('Contraseña actualizada.','ok')}catch(e){toast(e.message,'err')}finally{hideLoader()}}
+
+    // ── Utilidades UI ─────────────────────────────────────────────────────────
+    function openModal(id){$(id).classList.add('open')}
+    function closeModal(id){$(id).classList.remove('open')}
+    function showLoader(text='Procesando…'){$('loader-text').textContent=text;$('loader').classList.add('open')}
+    function hideLoader(){$('loader').classList.remove('open')}
+    let toastTimer;function toast(message,type='ok'){clearTimeout(toastTimer);const el=$('toast');el.className=type+' show';el.querySelector('i').className=type==='err'?'fa-solid fa-circle-exclamation':type==='info'?'fa-solid fa-circle-info':'fa-solid fa-circle-check';$('toast-text').textContent=message;toastTimer=setTimeout(()=>el.classList.remove('show'),5200)}
+    function esc(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+    function attr(value){return esc(value).replace(/`/g,'&#96;')}
+    function normalize(value){return String(value??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim()}
+    function initials(name){return String(name||'TR').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()}
+    function firstName(name){return String(name||'').trim().split(/\s+/)[0]||'usuario'}
+    function fmtDate(value){if(!value)return 'Pendiente';const m=String(value).match(/^(\d{4})-(\d{2})-(\d{2})/);return m?`${m[3]}/${m[2]}/${m[1]}`:esc(value)}
+    function fileToDataUrl(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(new Error('No fue posible leer el archivo.'));reader.readAsDataURL(file)})}
+    function headerKey(value){return normalize(value).replace(/_/g,' ').replace(/\s+/g,' ').toUpperCase()}
+    function cellText(value){if(value===null||value===undefined)return '';if(value instanceof Date)return excelDate(value);return String(value).trim()}
+    function excelDate(value){
+      if(!value)return '';if(value instanceof Date&&!isNaN(value))return localIso(value);if(typeof value==='number'){const d=XLSX.SSF.parse_date_code(value);return d?`${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`:''}
+      const s=String(value).trim();let m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m)return `${m[1]}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')}`;m=s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);if(m)return `${m[3]}-${String(m[2]).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`;const d=new Date(s);return isNaN(d)?'':localIso(d)
+    }
+    function localIso(date){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`}
+    function normalizeStatusClient(value){const k=normalize(value);if(k==='vigente')return 'Vigente';if(k==='por vencer'||k==='por-vencer')return 'Por vencer';if(['vencida','vencido','vencidas','vencidos'].includes(k))return 'Vencida';return ''}
+    function statusKeyClient(value){const s=normalizeStatusClient(value);return s==='Vigente'?'vigente':s==='Por vencer'?'por-vencer':s==='Vencida'?'vencida':'sin-definir'}
+    function suggestStatusClient(expiry){if(!expiry)return 'Sin definir';const today=localIso(new Date());const soonDate=new Date();soonDate.setDate(soonDate.getDate()+30);const soon=localIso(soonDate);return expiry<today?'Vencida':expiry<=soon?'Por vencer':'Vigente'}
+  </script>
+</body>
+</html>
