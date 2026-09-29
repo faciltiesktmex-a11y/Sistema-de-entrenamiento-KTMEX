@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ktmex-training-v2-0-3-20260929';
+const CACHE_NAME = 'ktmex-training-v2-0-4-20260929';
 const APP_SHELL = [
   './',
   './index.html',
