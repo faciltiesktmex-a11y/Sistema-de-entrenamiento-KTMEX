@@ -15,6 +15,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
     *{box-sizing:border-box;font-family:'DM Sans',system-ui,-apple-system,sans-serif}
     :root{--navy:#0A1628;--navy2:#102442;--blue:#2563EB;--blue2:#1D4ED8;--bg:#F1F5F9;--card:#fff;--border:#E2E8F0;--text:#1E293B;--muted:#64748B;--green:#16A34A;--amber:#D97706;--red:#DC2626;--purple:#7C3AED}
@@ -52,7 +53,24 @@
     @media(max-width:1180px){.kpi-grid{grid-template-columns:repeat(4,1fr)}.training-cards{grid-template-columns:1fr}.session-meta{display:none}}
     @media(max-width:900px){.nav-inner{padding:0 12px;gap:10px}.brand small{display:none}.nav-links{order:3;position:absolute;top:66px;left:0;right:0;background:var(--navy2);padding:7px 10px}.page{padding:65px 12px 35px}.login-shell{padding-top:65px}.qr-layout{grid-template-columns:1fr}.grid-3,.grid-4{grid-template-columns:repeat(2,1fr)}.catalog-grid{grid-template-columns:1fr}.import-summary{grid-template-columns:repeat(3,1fr)}}
     @media(max-width:600px){.brand b{font-size:.8rem}.session-box .icon-btn:first-of-type{display:none}.page-head{flex-direction:column}.page-head .btn-row{width:100%}.page-head .btn{flex:1}.kpi-grid{grid-template-columns:repeat(2,1fr)}.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.identity{padding:16px}.identity-grid{grid-template-columns:1fr}.status-summary{grid-template-columns:repeat(3,1fr)}.status-summary .summary-item{padding:9px}.status-summary b{font-size:1rem}.hero{padding:21px;align-items:flex-start;flex-direction:column}.hero h1{font-size:1.3rem}.modal-bg{padding:7px}.modal{border-radius:14px}.modal-body{padding:15px}.pdf-frame{height:66vh}.import-summary{grid-template-columns:repeat(2,1fr)}#connection-pill{display:none}}
-    @media print{body>*{display:none!important}#print-area{display:block!important}.app-nav,#connection-pill{display:none!important}}
+    /* 2.1 · Consulta pública, visor de DC3 solo vista y programación */
+    .public-wrap{max-width:860px;margin:0 auto;padding:26px 16px 50px}.public-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}.public-head h1{margin:0;font-size:1.25rem;color:var(--navy)}.public-head p{margin:3px 0 0;color:var(--muted);font-size:.74rem}.public-foot{margin-top:18px;text-align:center;color:#94A3B8;font-size:.66rem;line-height:1.5}
+    .days-left{font-size:.62rem;color:var(--muted);font-weight:700;margin-top:2px}.training-meta .days-left{padding:0;background:none;border-radius:0;margin-top:3px}
+    .page-head .btn-gray,.page-head .btn-soft{border:1px solid var(--border);background:#fff}.page-head .btn-soft{color:#1D4ED8}
+    .pdf-viewer{height:68vh;overflow:auto;border:1px solid var(--border);border-radius:10px;background:#E2E8F0;padding:10px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.pdf-page{margin:0 auto 10px;max-width:100%;box-shadow:0 2px 10px rgba(15,23,42,.18);background:#fff;width:fit-content}.pdf-page canvas{display:block;max-width:100%;height:auto!important;pointer-events:none}
+    .view-only-note{display:flex;align-items:center;gap:8px;font-size:.7rem;color:#92400E;background:#FFFBEB;border:1px solid #FDE68A;border-radius:9px;padding:8px 10px;margin-bottom:10px}
+    .sched-top{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:15px;margin-bottom:15px}.week-banner{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.week-chip{flex:1;min-width:150px;border-radius:12px;padding:11px 12px;border:1px solid var(--border)}.week-chip span{display:block;font-size:.6rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}.week-chip b{display:block;font-size:.95rem;color:var(--navy);margin-top:3px}.week-chip.t1{background:#F0FDF4;border-color:#BBF7D0}.week-chip.t2{background:#EEF2FF;border-color:#C7D2FE}
+    .rules{margin:0;padding-left:18px;font-size:.73rem;color:#334155;line-height:1.6}
+    .cap-bar{height:6px;border-radius:9px;background:#E2E8F0;overflow:hidden;margin-top:4px;min-width:70px}.cap-bar i{display:block;height:100%;background:var(--blue)}.cap-bar.full i{background:var(--amber)}
+    .badge-permit{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A}.badge-shift1{background:#DCFCE7;color:#166534}.badge-shift2{background:#E0E7FF;color:#3730A3}.badge-warn{background:#FEE2E2;color:#991B1B}
+    .sched-kpis{grid-template-columns:repeat(5,minmax(0,1fr))}
+    .toggle{display:flex;gap:7px;align-items:center;font-size:.72rem;color:#475569;font-weight:600;white-space:nowrap;min-height:40px}
+    .chip-btn{border:0;cursor:pointer}.chip-btn:hover{background:#E2E8F0}
+    .row-muted td{color:#94A3B8}
+    @media(max-width:1180px){.sched-top{grid-template-columns:1fr}.sched-kpis{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:600px){.sched-kpis{grid-template-columns:repeat(2,1fr)}.public-wrap{padding:76px 12px 40px}.pdf-viewer{height:70vh;padding:6px}}
+    #print-area{display:none}
+    @media print{body>*{display:none!important}#print-area{display:block!important;padding:40px;font-size:14px;text-align:center}.app-nav,#connection-pill{display:none!important}}
   </style>
 </head>
 <body>
@@ -66,6 +84,7 @@
         <button class="nav-btn" data-view="home" onclick="go('home')"><i class="fa-solid fa-house"></i>Inicio</button>
         <button class="nav-btn" data-view="qr" onclick="go('qr')"><i class="fa-solid fa-qrcode"></i>Verificar QR</button>
         <button class="nav-btn admin-only" data-view="trainings" onclick="go('trainings')"><i class="fa-solid fa-certificate"></i>Capacitaciones</button>
+        <button class="nav-btn admin-only" data-view="schedule" onclick="go('schedule')"><i class="fa-solid fa-calendar-days"></i>Programación</button>
         <button class="nav-btn admin-only" data-view="workers" onclick="go('workers')"><i class="fa-solid fa-helmet-safety"></i>Trabajadores</button>
         <button class="nav-btn admin-only" data-view="import" onclick="go('import')"><i class="fa-solid fa-file-excel"></i>Importar Excel</button>
         <button class="nav-btn admin-only" data-view="catalogs" onclick="go('catalogs')"><i class="fa-solid fa-list"></i>Catálogos</button>
@@ -93,8 +112,20 @@
           <div id="login-error" class="notice notice-error hidden" style="margin-bottom:12px"></div>
           <button id="login-button" class="btn btn-primary" style="width:100%" type="submit"><i class="fa-solid fa-right-to-bracket"></i>Ingresar</button>
         </form>
+        <button id="login-back-public" class="btn btn-gray hidden" style="width:100%;margin-top:9px" type="button" onclick="showPublicFromUrl()"><i class="fa-solid fa-arrow-left"></i>Volver a la consulta del QR</button>
         <div class="login-foot">KTMEX · Sistema independiente con el modelo visual de Facilities<span id="backend-version" class="backend-version">Verificando backend…</span></div>
       </div>
+    </div>
+  </section>
+
+  <section id="view-public" class="view">
+    <div class="public-wrap">
+      <div class="public-head">
+        <div><div class="eyebrow">Consulta de capacitación</div><h1>Expediente del trabajador</h1><p>Información vigente al momento de escanear el código QR.</p></div>
+        <button class="btn btn-gray btn-sm" onclick="goToLoginFromPublic()"><i class="fa-solid fa-user-shield"></i>Acceso Entrenamiento</button>
+      </div>
+      <div id="public-result" class="card card-pad"><div class="result-empty"><div><i class="fa-solid fa-spinner spin"></i><br><b>Consultando…</b></div></div></div>
+      <div class="public-foot">KTMEX Training · El estatus se calcula con la fecha de vigencia del día de hoy.<br>Las constancias DC3 se muestran solo para consulta; la impresión está reservada a Entrenamiento.</div>
     </div>
   </section>
 
@@ -154,16 +185,81 @@
       </div>
     </section>
 
+    <section id="view-schedule" class="view admin-only">
+      <div class="page-head">
+        <div><div class="eyebrow">Planeación</div><h1>Programación de capacitaciones</h1><p>Asigna personal a las sesiones sin programarlo en 2° turno y antes de que venza su capacitación.</p></div>
+        <div class="btn-row">
+          <button class="btn btn-gray" onclick="downloadCalendarTemplate()"><i class="fa-solid fa-download"></i>Plantilla</button>
+          <button class="btn btn-soft" onclick="$('calendar-file').click()"><i class="fa-solid fa-file-excel"></i>Actualizar calendario (Excel)</button>
+          <input id="calendar-file" type="file" accept=".xlsx,.xls,.csv" class="hidden" onchange="readCalendarFile(event)">
+          <button class="btn btn-gray" onclick="openSessionModal()"><i class="fa-solid fa-plus"></i>Nueva sesión</button>
+          <button class="btn btn-primary" onclick="proposeSchedule()"><i class="fa-solid fa-wand-magic-sparkles"></i>Generar propuesta</button>
+        </div>
+      </div>
+      <div id="schedule-alert" class="notice notice-warn hidden" style="margin-bottom:14px"></div>
+      <div class="kpi-grid sched-kpis">
+        <div class="kpi"><div class="kpi-icon bg-blue"><i class="fa-solid fa-calendar-days"></i></div><b id="s-k-sessions">—</b><span>SESIONES PRÓXIMAS</span></div>
+        <div class="kpi"><div class="kpi-icon bg-green"><i class="fa-solid fa-user-check"></i></div><b id="s-k-enrolled">—</b><span>PERSONAS PROGRAMADAS</span></div>
+        <div class="kpi"><div class="kpi-icon bg-red"><i class="fa-solid fa-user-clock"></i></div><b id="s-k-pending">—</b><span>PENDIENTES SIN SESIÓN</span></div>
+        <div class="kpi"><div class="kpi-icon bg-amber"><i class="fa-solid fa-door-open"></i></div><b id="s-k-permits">—</b><span>PERMISOS DE SALIDA (SÁBADO)</span></div>
+        <div class="kpi"><div class="kpi-icon bg-slate"><i class="fa-solid fa-user-slash"></i></div><b id="s-k-noshift">—</b><span>TRABAJADORES SIN TURNO</span></div>
+      </div>
+      <div class="sched-top">
+        <div class="card card-pad">
+          <div class="card-title"><div><h2>Turnos y rotación</h2><p>Rotación cada <span id="rot-weeks">2</span> semanas, de lunes a domingo.</p></div></div>
+          <div id="week-banner" class="week-banner"></div>
+          <div class="grid-4">
+            <div class="field"><label>1° turno inicia</label><input id="cfg-t1-start" class="inp" type="time"></div>
+            <div class="field"><label>1° turno termina</label><input id="cfg-t1-end" class="inp" type="time"></div>
+            <div class="field"><label>2° turno inicia</label><input id="cfg-t2-start" class="inp" type="time"></div>
+            <div class="field"><label>2° turno termina</label><input id="cfg-t2-end" class="inp" type="time"></div>
+          </div>
+          <div class="grid-2" style="margin-top:13px">
+            <div class="field"><label>Lunes en que el Grupo A inicia en 1° turno *</label><input id="cfg-ref" class="inp" type="date"><small>Cualquier lunes de referencia; el sistema calcula las quincenas hacia adelante y hacia atrás.</small></div>
+            <div class="field"><label>Programar con anticipación de (días)</label><input id="cfg-window" class="inp" type="number" min="1" max="365"><small>Entra a pendientes quien vence dentro de este plazo o ya venció.</small></div>
+          </div>
+          <div class="btn-row" style="justify-content:flex-end;margin-top:12px"><button class="btn btn-primary" onclick="saveShiftConfigUI()"><i class="fa-solid fa-floppy-disk"></i>Guardar turnos</button></div>
+        </div>
+        <div class="card card-pad">
+          <div class="card-title"><div><h2>Reglas de programación</h2><p>Se aplican en la propuesta y al agregar personas manualmente.</p></div></div>
+          <ul class="rules">
+            <li><b>Lunes a viernes y domingo:</b> solo se programa a quien esté en <b>1° turno</b> esa semana.</li>
+            <li><b>Sábado:</b> también puede asistir quien esté en <b>2° turno</b>; queda marcado como <span class="badge badge-permit">Permiso de salida anticipada</span>.</li>
+            <li>Se busca la primera sesión <b>antes de la fecha de vencimiento</b>; si solo hay sesiones posteriores, se propone y se avisa.</li>
+            <li>Se respeta el <b>cupo</b> y no se permiten <b>empalmes</b> de horario el mismo día.</li>
+            <li>Al marcar <b>Asistió</b>, se crea la capacitación con la fecha de la sesión y la vigencia del curso (Catálogos).</li>
+            <li>Entrenamiento puede autorizar una <b>excepción</b> de turno indicando el motivo; queda en la bitácora.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card card-pad">
+        <div class="card-title"><div><h2>Sesiones de curso</h2><p>Calendario cargado desde Excel o capturado manualmente.</p></div></div>
+        <div class="toolbar">
+          <div class="field grow"><label>Buscar</label><div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input id="session-search" class="inp" placeholder="Curso, lugar o instructor…" oninput="renderSessions()"></div></div>
+          <label class="toggle"><input id="session-show-past" type="checkbox" onchange="renderSessions()"> Mostrar pasadas y canceladas</label>
+        </div>
+        <div class="table-wrap"><table class="table"><thead><tr><th>Fecha</th><th>Horario</th><th>Curso</th><th>Lugar / instructor</th><th>Cupo</th><th>Permisos</th><th>Estatus</th><th>Acciones</th></tr></thead><tbody id="session-body"><tr><td colspan="8" class="empty-cell">Cargando…</td></tr></tbody></table></div>
+      </div>
+      <div class="card card-pad" style="margin-top:15px">
+        <div class="card-title"><div><h2>Personal pendiente de capacitación</h2><p id="needs-caption">Vencidos o por vencer dentro de la anticipación configurada.</p></div></div>
+        <div class="toolbar">
+          <div class="field grow"><label>Buscar</label><div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input id="needs-search" class="inp" placeholder="No., nombre, departamento o curso…" oninput="renderNeeds()"></div></div>
+          <div class="field"><label>Mostrar</label><select id="needs-filter" class="inp" onchange="renderNeeds()"><option value="pending">Sin sesión asignada</option><option value="all">Todos</option><option value="programmed">Ya programados</option></select></div>
+        </div>
+        <div class="table-wrap"><table class="table"><thead><tr><th>No.</th><th>Trabajador</th><th>Departamento</th><th>Turno</th><th>Curso</th><th>Vence</th><th>Estatus</th><th>Sesión</th></tr></thead><tbody id="needs-body"><tr><td colspan="8" class="empty-cell">Cargando…</td></tr></tbody></table></div>
+      </div>
+    </section>
+
     <section id="view-workers" class="view admin-only">
       <div class="page-head"><div><div class="eyebrow">Administración</div><h1>Trabajadores y códigos QR</h1><p>El QR se genera una sola vez, pertenece al trabajador y puede reimprimirse al cambiar de casco.</p></div><button class="btn btn-primary" onclick="openWorkerModal()"><i class="fa-solid fa-user-plus"></i>Agregar trabajador</button></div>
       <div class="card card-pad">
         <div class="toolbar"><div class="field grow"><label>Buscar</label><div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input id="worker-search" class="inp" placeholder="Número, nombre, departamento o puesto…" oninput="renderWorkers()"></div></div></div>
-        <div class="table-wrap"><table class="table"><thead><tr><th>No. empleado</th><th>Nombre</th><th>Departamento</th><th>Puesto</th><th>QR</th><th>Acciones</th></tr></thead><tbody id="worker-body"><tr><td colspan="6" class="empty-cell">Cargando…</td></tr></tbody></table></div>
+        <div class="table-wrap"><table class="table"><thead><tr><th>No. empleado</th><th>Nombre</th><th>Departamento</th><th>Puesto</th><th>Turno</th><th>QR</th><th>Acciones</th></tr></thead><tbody id="worker-body"><tr><td colspan="7" class="empty-cell">Cargando…</td></tr></tbody></table></div>
       </div>
     </section>
 
     <section id="view-import" class="view admin-only">
-      <div class="page-head"><div><div class="eyebrow">Carga inicial y actualizaciones</div><h1>Importar Excel de capacitación</h1><p>Compatible con NO, NOMBRE, DEPTO_EMP, PUESTO, CURSO, FECHA_CURSO, VIGENCIA y ESTATUS.</p></div></div>
+      <div class="page-head"><div><div class="eyebrow">Carga inicial y actualizaciones</div><h1>Importar Excel de capacitación</h1><p>Compatible con NO, NOMBRE, DEPTO_EMP, PUESTO, CURSO, FECHA_CURSO, VIGENCIA, ESTATUS y TURNO (A, B, 1 o 2).</p></div></div>
       <div class="grid-2">
         <div class="card card-pad">
           <div class="card-title"><div><h2>1. Selecciona el archivo</h2><p>Se procesa localmente y solo se envían las columnas necesarias.</p></div></div>
@@ -182,7 +278,7 @@
         <div class="card-title"><div><h2>2. Vista previa y confirmación</h2><p id="import-file-label">—</p></div></div>
         <div id="import-summary" class="import-summary"></div>
         <div id="import-warning" class="notice notice-warn hidden" style="margin-bottom:12px"></div>
-        <div class="table-wrap"><table class="table"><thead><tr><th>Fila</th><th>No.</th><th>Nombre</th><th>Departamento</th><th>Puesto</th><th>Curso</th><th>Fecha curso</th><th>Vigencia</th><th>Estatus a guardar</th></tr></thead><tbody id="import-body"></tbody></table></div>
+        <div class="table-wrap"><table class="table"><thead><tr><th>Fila</th><th>No.</th><th>Nombre</th><th>Departamento</th><th>Puesto</th><th>Turno</th><th>Curso</th><th>Fecha curso</th><th>Vigencia</th><th>Estatus a guardar</th></tr></thead><tbody id="import-body"></tbody></table></div>
         <label style="display:flex;gap:8px;align-items:flex-start;margin-top:14px;font-size:.73rem;color:#334155"><input id="import-confirm" type="checkbox"> Confirmo que Entrenamiento revisó la vista previa y autoriza guardar estos estatus.</label>
         <div class="btn-row" style="justify-content:flex-end;margin-top:12px"><button id="import-button" class="btn btn-primary" onclick="confirmImport()"><i class="fa-solid fa-file-import"></i>Importar a producción</button></div>
       </div>
@@ -192,7 +288,7 @@
       <div class="page-head"><div><div class="eyebrow">Configuración</div><h1>Catálogos</h1><p>Entrenamiento puede cargar la lista oficial de departamentos; los cursos también se agregan al importar.</p></div><button class="btn btn-primary" onclick="openDepartmentModal()"><i class="fa-solid fa-plus"></i>Agregar departamento</button></div>
       <div class="catalog-grid">
         <div class="card card-pad"><div class="card-title"><div><h2>Departamentos</h2><p id="department-count">0 elementos</p></div></div><div id="department-chips" class="chips"></div></div>
-        <div class="card card-pad"><div class="card-title"><div><h2>Cursos</h2><p id="course-count">0 elementos</p></div></div><div id="course-chips" class="chips"></div></div>
+        <div class="card card-pad"><div class="card-title"><div><h2>Cursos</h2><p id="course-count">0 elementos</p></div><button class="btn btn-soft btn-sm" onclick="openCourseModal()"><i class="fa-solid fa-clock-rotate-left"></i>Vigencia de curso</button></div><p style="margin:-6px 0 10px;color:#64748B;font-size:.7rem">Toca un curso para indicar cuántos meses dura su vigencia.</p><div id="course-chips" class="chips"></div></div>
       </div>
     </section>
 
@@ -216,13 +312,54 @@
   </div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('training-modal')">Cancelar</button><button id="training-save" class="btn btn-primary" onclick="saveTrainingUI()"><i class="fa-solid fa-floppy-disk"></i>Guardar</button></div></div></div>
 
   <div id="worker-modal" class="modal-bg"><div class="modal"><div class="modal-head"><h3 id="worker-modal-title">Agregar trabajador</h3><button class="modal-close" onclick="closeModal('worker-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body">
-    <input id="worker-id" type="hidden"><div class="grid-2"><div class="field"><label>Número de empleado *</label><input id="worker-no" class="inp"></div><div class="field"><label>Nombre completo *</label><input id="worker-name" class="inp"></div><div class="field"><label>Departamento *</label><input id="worker-dept" class="inp" list="department-list"></div><div class="field"><label>Puesto *</label><input id="worker-position" class="inp"></div></div>
+    <input id="worker-id" type="hidden"><div class="grid-2"><div class="field"><label>Número de empleado *</label><input id="worker-no" class="inp"></div><div class="field"><label>Nombre completo *</label><input id="worker-name" class="inp"></div><div class="field"><label>Departamento *</label><input id="worker-dept" class="inp" list="department-list"></div><div class="field"><label>Puesto *</label><input id="worker-position" class="inp"></div><div class="field full"><label>Turno</label><select id="worker-shift" class="inp"><option value="">Sin turno asignado</option><option value="ROTATIVO A">Rotativo · Grupo A</option><option value="ROTATIVO B">Rotativo · Grupo B</option><option value="FIJO 1">Fijo 1° turno</option><option value="FIJO 2">Fijo 2° turno</option></select><small>Rotativos cambian de turno cada 2 semanas. Se usa para no programarlo en 2° turno.</small></div></div>
     <div class="notice notice-info" style="margin-top:14px"><b>El QR no cambia.</b> Al editar nombre, departamento, puesto o capacitaciones, el mismo código mostrará la información actualizada.</div>
   </div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('worker-modal')">Cancelar</button><button class="btn btn-primary" onclick="saveWorkerUI()"><i class="fa-solid fa-floppy-disk"></i>Guardar</button></div></div></div>
 
-  <div id="qr-label-modal" class="modal-bg"><div class="modal" style="max-width:470px"><div class="modal-head"><h3>Etiqueta QR del trabajador</h3><button class="modal-close" onclick="closeModal('qr-label-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body"><div id="qr-print-label" class="qr-print-label"><div style="font-size:.65rem;font-weight:800;color:#2563EB;letter-spacing:.12em">KTMEX TRAINING</div><div id="qr-code-box" class="qr-code-box"></div><h3 id="qr-label-name">—</h3><p>No. empleado <b id="qr-label-no">—</b></p><p style="margin-top:6px">Escanee e inicie sesión para consultar</p></div></div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('qr-label-modal')">Cerrar</button><button class="btn btn-primary" onclick="printQrLabel()"><i class="fa-solid fa-print"></i>Imprimir etiqueta</button></div></div></div>
+  <div id="qr-label-modal" class="modal-bg"><div class="modal" style="max-width:470px"><div class="modal-head"><h3>Etiqueta QR del trabajador</h3><button class="modal-close" onclick="closeModal('qr-label-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body"><div id="qr-print-label" class="qr-print-label"><div style="font-size:.65rem;font-weight:800;color:#2563EB;letter-spacing:.12em">KTMEX TRAINING</div><div id="qr-code-box" class="qr-code-box"></div><h3 id="qr-label-name">—</h3><p>No. empleado <b id="qr-label-no">—</b></p><p style="margin-top:6px">Escanee para consultar capacitaciones y DC3</p></div></div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('qr-label-modal')">Cerrar</button><button class="btn btn-primary" onclick="printQrLabel()"><i class="fa-solid fa-print"></i>Imprimir etiqueta</button></div></div></div>
 
-  <div id="dc3-modal" class="modal-bg"><div class="modal wide"><div class="modal-head"><div><h3 id="dc3-title">DC3</h3><div id="dc3-subtitle" style="font-size:.67rem;color:#64748B;margin-top:2px"></div></div><button class="modal-close" onclick="closeDc3Modal()"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body"><div id="dc3-loading" class="result-empty" style="min-height:320px"><div><i class="fa-solid fa-spinner spin"></i><br><b>Cargando PDF…</b></div></div><iframe id="dc3-frame" class="pdf-frame hidden" title="Vista previa DC3"></iframe></div><div class="modal-foot"><button class="btn btn-gray" onclick="closeDc3Modal()">Cerrar</button><button class="btn btn-soft" onclick="openCurrentDc3Tab()"><i class="fa-solid fa-up-right-from-square"></i>Abrir en pestaña</button><button class="btn btn-primary" onclick="printCurrentDc3()"><i class="fa-solid fa-print"></i>Imprimir DC3</button></div></div></div>
+  <div id="dc3-modal" class="modal-bg"><div class="modal wide"><div class="modal-head"><div><h3 id="dc3-title">DC3</h3><div id="dc3-subtitle" style="font-size:.67rem;color:#64748B;margin-top:2px"></div></div><button class="modal-close" onclick="closeDc3Modal()"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body"><div id="dc3-loading" class="result-empty" style="min-height:320px"><div><i class="fa-solid fa-spinner spin"></i><br><b>Cargando PDF…</b></div></div><div id="dc3-note" class="view-only-note hidden"><i class="fa-solid fa-eye"></i><span>Documento solo para consulta. La impresión y descarga están reservadas a Entrenamiento.</span></div><div id="dc3-viewer" class="pdf-viewer hidden" oncontextmenu="return false" ondragstart="return false"></div></div><div class="modal-foot"><button class="btn btn-gray" onclick="closeDc3Modal()">Cerrar</button><button id="dc3-open-tab" class="btn btn-soft hidden" onclick="openCurrentDc3Tab()"><i class="fa-solid fa-up-right-from-square"></i>Abrir en pestaña</button><button id="dc3-print" class="btn btn-primary hidden" onclick="printCurrentDc3()"><i class="fa-solid fa-print"></i>Imprimir DC3</button></div></div></div>
+
+  <div id="session-modal" class="modal-bg"><div class="modal"><div class="modal-head"><h3 id="session-modal-title">Nueva sesión de curso</h3><button class="modal-close" onclick="closeModal('session-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body">
+    <input id="session-id" type="hidden">
+    <div class="grid-2">
+      <div class="field full"><label>Curso *</label><input id="session-course" class="inp" list="course-list" placeholder="Ej. MONTACARGAS"></div>
+      <div class="field"><label>Fecha *</label><input id="session-date" class="inp" type="date" oninput="sessionDateHint()"><small id="session-date-hint"></small></div>
+      <div class="field"><label>Cupo *</label><input id="session-capacity" class="inp" type="number" min="1" max="500" value="10"></div>
+      <div class="field"><label>Hora de inicio *</label><input id="session-start" class="inp" type="time" value="08:00"></div>
+      <div class="field"><label>Hora de fin *</label><input id="session-end" class="inp" type="time" value="12:00"></div>
+      <div class="field"><label>Instructor</label><input id="session-instructor" class="inp"></div>
+      <div class="field"><label>Lugar</label><input id="session-place" class="inp"></div>
+      <div class="field full"><label>Observaciones</label><textarea id="session-notes" class="inp"></textarea></div>
+    </div>
+  </div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('session-modal')">Cancelar</button><button class="btn btn-primary" onclick="saveSessionUI()"><i class="fa-solid fa-floppy-disk"></i>Guardar sesión</button></div></div></div>
+
+  <div id="participants-modal" class="modal-bg"><div class="modal wide"><div class="modal-head"><div><h3 id="participants-title">Participantes</h3><div id="participants-subtitle" style="font-size:.7rem;color:#64748B;margin-top:2px"></div></div><button class="modal-close" onclick="closeModal('participants-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body">
+    <div id="participants-add" class="toolbar">
+      <div class="field grow"><label>Agregar trabajador</label><input id="participants-worker" class="inp" list="participants-worker-list" placeholder="Escribe número o nombre…"><datalist id="participants-worker-list"></datalist></div>
+      <button class="btn btn-soft" onclick="addParticipantUI()"><i class="fa-solid fa-user-plus"></i>Agregar</button>
+      <button class="btn btn-gray" onclick="proposeSchedule(CURRENT_SESSION_ID)"><i class="fa-solid fa-wand-magic-sparkles"></i>Sugerir para esta sesión</button>
+    </div>
+    <div class="table-wrap"><table class="table" style="min-width:820px"><thead><tr><th>No.</th><th>Trabajador</th><th>Turno</th><th>Turno ese día</th><th>Notas</th><th>Estatus</th></tr></thead><tbody id="participants-body"></tbody></table></div>
+  </div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('participants-modal')">Cerrar</button><button class="btn btn-primary" onclick="printAttendance()"><i class="fa-solid fa-print"></i>Lista de asistencia</button></div></div></div>
+
+  <div id="proposal-modal" class="modal-bg"><div class="modal wide"><div class="modal-head"><div><h3>Propuesta de programación</h3><div id="proposal-subtitle" style="font-size:.7rem;color:#64748B;margin-top:2px"></div></div><button class="modal-close" onclick="closeModal('proposal-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body">
+    <div class="notice notice-info" style="margin-bottom:12px">Revisa la propuesta y desmarca a quien no deba programarse. Nada se guarda hasta presionar <b>Confirmar programación</b>.</div>
+    <div class="table-wrap"><table class="table" style="min-width:900px"><thead><tr><th><input type="checkbox" id="proposal-all" checked onchange="document.querySelectorAll('.proposal-check').forEach(c=>c.checked=this.checked)"></th><th>No.</th><th>Trabajador</th><th>Turno</th><th>Curso</th><th>Vence</th><th>Sesión propuesta</th><th>Notas</th></tr></thead><tbody id="proposal-body"></tbody></table></div>
+    <div id="proposal-unassigned" style="margin-top:15px"></div>
+  </div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('proposal-modal')">Cancelar</button><button id="proposal-confirm" class="btn btn-primary" onclick="confirmProposal()"><i class="fa-solid fa-check"></i>Confirmar programación</button></div></div></div>
+
+  <div id="calendar-modal" class="modal-bg"><div class="modal wide"><div class="modal-head"><div><h3>Actualizar calendario de cursos</h3><div id="calendar-subtitle" style="font-size:.7rem;color:#64748B;margin-top:2px"></div></div><button class="modal-close" onclick="closeModal('calendar-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body">
+    <div class="notice notice-info" style="margin-bottom:12px">Columnas: <b>CURSO, FECHA, HORA_INICIO, HORA_FIN, CUPO</b> y opcionales INSTRUCTOR, LUGAR, OBSERVACIONES. Una sesión con el mismo curso, fecha y hora de inicio se <b>actualiza</b>; las demás se agregan. Las sesiones que no vienen en el archivo no se borran.</div>
+    <div id="calendar-warning" class="notice notice-warn hidden" style="margin-bottom:12px"></div>
+    <div class="table-wrap"><table class="table" style="min-width:820px"><thead><tr><th>Fila</th><th>Curso</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Cupo</th><th>Instructor</th><th>Lugar</th></tr></thead><tbody id="calendar-body"></tbody></table></div>
+  </div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('calendar-modal')">Cancelar</button><button id="calendar-confirm" class="btn btn-primary" onclick="confirmCalendarImport()"><i class="fa-solid fa-file-import"></i>Guardar calendario</button></div></div></div>
+
+  <div id="course-modal" class="modal-bg"><div class="modal" style="max-width:470px"><div class="modal-head"><h3>Vigencia del curso</h3><button class="modal-close" onclick="closeModal('course-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body"><div class="field"><label>Curso *</label><input id="course-name" class="inp" list="course-list"></div><div class="field" style="margin-top:11px"><label>Vigencia (meses) *</label><input id="course-months" class="inp" type="number" min="1" max="120" placeholder="12"><small>Se usa para calcular el nuevo vencimiento cuando se marca asistencia en Programación.</small></div></div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('course-modal')">Cancelar</button><button class="btn btn-primary" onclick="saveCourseUI()">Guardar</button></div></div></div>
+
+  <div id="override-modal" class="modal-bg"><div class="modal" style="max-width:520px"><div class="modal-head"><h3>Autorizar excepción</h3><button class="modal-close" onclick="closeModal('override-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body"><div id="override-warnings" class="notice notice-warn"></div><div class="field" style="margin-top:12px"><label>Motivo de la excepción *</label><textarea id="override-reason" class="inp" placeholder="Ej. Supervisor autoriza cambio de turno esa semana"></textarea><small>Queda registrado en la programación y en la bitácora.</small></div></div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('override-modal')">Cancelar</button><button class="btn btn-primary" onclick="confirmOverride()"><i class="fa-solid fa-user-check"></i>Programar con excepción</button></div></div></div>
+
+  <div id="print-area">La impresión de esta pantalla no está disponible. Las constancias DC3 solo puede imprimirlas Entrenamiento.</div>
 
   <div id="user-modal" class="modal-bg"><div class="modal"><div class="modal-head"><h3 id="user-modal-title">Agregar cuenta departamental</h3><button class="modal-close" onclick="closeModal('user-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body"><input id="user-id" type="hidden"><div class="grid-2"><div class="field"><label>Usuario *</label><input id="user-username" class="inp" placeholder="ej. consulta.maintenance"></div><div class="field"><label>Nombre de la cuenta *</label><input id="user-name" class="inp" placeholder="Consulta Maintenance"></div><div class="field"><label>Departamento *</label><input id="user-department" class="inp" list="department-list"></div><div class="field"><label>Rol *</label><select id="user-role" class="inp"><option value="consulta">Consulta departamental</option><option value="admin">Administrador Training</option></select></div><div id="user-password-field" class="field full"><label>Contraseña inicial *</label><input id="user-password" class="inp" type="password" autocomplete="new-password"><small>Mínimo 8 caracteres, mayúscula, minúscula y número.</small></div></div></div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('user-modal')">Cancelar</button><button class="btn btn-primary" onclick="saveUserUI()"><i class="fa-solid fa-floppy-disk"></i>Guardar cuenta</button></div></div></div>
 
@@ -240,7 +377,16 @@
     // Igual que Facilities: esta es la única línea que debe actualizarse después
     // de implementar Code.gs como Aplicación web en Google Apps Script.
     window.SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQOfkCQWUqrQVPfkDalYUkqjfK0uncI5CPusKDK0yg2c4_4Bn82NYIR1Gt01qtxVXCjw/exec';
-    const EXPECTED_BACKEND_VERSION = '2.0.4-configurada-2026-09-29';
+    const EXPECTED_BACKEND_VERSION = '2.1.0-programacion-2026-10-28';
+    const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    const WEEKDAYS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    let PUBLIC_QR = '';
+    let SCHEDULE = null;
+    let CURRENT_SESSION_ID = '';
+    let PROPOSAL = null;
+    let CALENDAR_ROWS = [];
+    let CALENDAR_FILE_NAME = '';
+    let PENDING_OVERRIDE = null;
 
     const $ = id => document.getElementById(id);
     let SESSION = null;
@@ -273,8 +419,26 @@
           if(r.valid){SESSION.user=r.user;saveSession();enterApp();return}
         }catch(e){}
       }
-      SESSION=null;saveSession();showView('login');checkBackendVersion();
+      SESSION=null;saveSession();
+      // 2.1: un QR escaneado se consulta sin iniciar sesión.
+      if(urlQr()){showPublicFromUrl();checkBackendVersion();return}
+      showView('login');checkBackendVersion();
     }
+
+    function urlQr(){return new URLSearchParams(location.search).get('qr')||''}
+
+    async function showPublicFromUrl(){
+      PUBLIC_QR=urlQr();if(!PUBLIC_QR){showView('login');return}
+      showView('public');
+      $('public-result').innerHTML='<div class="result-empty"><div><i class="fa-solid fa-spinner spin"></i><br><b>Consultando expediente…</b></div></div>';
+      try{
+        const r=await api({action:'publicLookupQr',qr:PUBLIC_QR},false);
+        if(!r.success){$('public-result').innerHTML=qrErrorHtml(r.error);return}
+        $('public-result').innerHTML=qrResultHtml(r,{publicView:true});
+      }catch(e){$('public-result').innerHTML=qrErrorHtml(e.message)}
+    }
+
+    function goToLoginFromPublic(){showView('login');$('login-back-public').classList.toggle('hidden',!urlQr());setTimeout(()=>$('login-user').focus(),50)}
 
     async function checkBackendVersion(){
       const label=$('backend-version');
@@ -349,7 +513,8 @@
 
     async function logout(){
       stopScanner();DC3_CACHE.forEach(item=>{try{URL.revokeObjectURL(item.url)}catch(e){}});DC3_CACHE.clear();const token=SESSION?.token;SESSION=null;saveSession();WORKERS=[];TRAININGS=[];USERS=[];CATALOGS={departments:[],courses:[]};
-      $('nav-links').classList.add('hidden');$('session-box').classList.add('hidden');showView('login');
+      $('nav-links').classList.add('hidden');$('session-box').classList.add('hidden');
+      if(urlQr())showPublicFromUrl();else showView('login');
       if(token)api({action:'logout',token},false).catch(()=>{});
     }
 
@@ -363,12 +528,13 @@
 
     async function go(name){
       if(!SESSION){showView('login');return}
-      const adminViews=['trainings','workers','import','catalogs','users'];
+      const adminViews=['trainings','schedule','workers','import','catalogs','users'];
       if(adminViews.includes(name)&&!isAdmin()){toast('Tu cuenta es de consulta.','err');return}
       showView(name);
       try{
         if(name==='home'&&isAdmin())await loadDashboard();
         if(name==='trainings')await loadTrainings();
+        if(name==='schedule')await loadSchedule();
         if(name==='workers')await loadWorkers();
         if(name==='catalogs')await loadCatalogs();
         if(name==='users')await loadUsers();
@@ -387,30 +553,45 @@
       stopScanner();showLoader('Consultando expediente…');
       try{
         const r=await api({action:'lookupQr',token:SESSION.token,qr});
-        if(!r.success){renderQrError(r.error);return}
-        renderQrResult(r);
-      }catch(e){renderQrError(e.message)}finally{hideLoader()}
+        if(!r.success){$('qr-result').innerHTML=qrErrorHtml(r.error);return}
+        CURRENT_QR_WORKER=r.worker;
+        $('qr-result').innerHTML=qrResultHtml(r,{publicView:false});
+      }catch(e){$('qr-result').innerHTML=qrErrorHtml(e.message)}finally{hideLoader()}
     }
 
-    function renderQrError(message){$('qr-result').innerHTML=`<div class="result-empty"><div><i class="fa-solid fa-circle-exclamation" style="color:#F87171"></i><br><b>No fue posible verificar el QR</b><p style="font-size:.72rem">${esc(message)}</p></div></div>`}
+    function qrErrorHtml(message){return `<div class="result-empty"><div><i class="fa-solid fa-circle-exclamation" style="color:#F87171"></i><br><b>No fue posible verificar el QR</b><p style="font-size:.72rem">${esc(message)}</p></div></div>`}
 
-    function renderQrResult(data){
-      const w=data.worker,c=data.counts||{};CURRENT_QR_WORKER=w;
+    // Expediente: nombre, área, No. empleado y DC3 con vigencia (estatus calculado por fecha).
+    function qrResultHtml(data,opts){
+      const w=data.worker,c=data.counts||{},trainings=data.trainings||[];
+      const ctx={publicView:opts.publicView,canPrint:Boolean(data.canPrint)};
       const groups=[['Vigentes','vigente','status-vigente'],['Por vencer','por-vencer','status-por-vencer'],['Vencidas','vencida','status-vencida']];
-      $('qr-result').innerHTML=`
-        <div class="identity"><div style="min-width:0;flex:1"><div style="font-size:.62rem;color:#8AB4FF;font-weight:800;letter-spacing:.1em">QR VERIFICADO</div><h2>${esc(w.name)}</h2><p>Expediente de capacitación actualizado</p><div class="identity-grid"><div class="identity-item"><span>No. empleado</span><b class="mono">${esc(w.employeeNo)}</b></div><div class="identity-item"><span>Puesto</span><b>${esc(w.position)}</b></div><div class="identity-item"><span>Departamento</span><b>${esc(w.department)}</b></div></div></div><div style="font-size:36px;color:#60A5FA"><i class="fa-solid fa-circle-check"></i></div></div>
+      const items=[['No. empleado',`<b class="mono">${esc(w.employeeNo)}</b>`],['Área',`<b>${esc(w.department)}</b>`]];
+      if(w.position)items.push(['Puesto',`<b>${esc(w.position)}</b>`]);
+      return `
+        <div class="identity"><div style="min-width:0;flex:1"><div style="font-size:.62rem;color:#8AB4FF;font-weight:800;letter-spacing:.1em">QR VERIFICADO</div><h2>${esc(w.name)}</h2><p>Consulta del ${fmtDate(data.today)}</p><div class="identity-grid">${items.map(([l,v])=>`<div class="identity-item"><span>${l}</span>${v}</div>`).join('')}</div></div><div style="font-size:36px;color:#60A5FA"><i class="fa-solid fa-circle-check"></i></div></div>
         <div class="status-summary"><div class="summary-item"><b style="color:#16A34A">${c.vigente||0}</b><span>VIGENTES</span></div><div class="summary-item"><b style="color:#D97706">${c.porVencer||0}</b><span>POR VENCER</span></div><div class="summary-item"><b style="color:#DC2626">${c.vencida||0}</b><span>VENCIDAS</span></div></div>
-        ${groups.map(([title,key,cls])=>renderTrainingGroup(title,key,cls,data.trainings||[])).join('')}
-        ${(data.trainings||[]).some(t=>t.statusKey==='sin-definir')?renderTrainingGroup('Sin definir','sin-definir','status-sin-definir',data.trainings||[]):''}`;
+        ${trainings.length?groups.map(([title,key,cls])=>trainingGroupHtml(title,key,cls,trainings,ctx)).join(''):'<div class="section-empty" style="margin-top:14px">El trabajador no tiene capacitaciones registradas.</div>'}
+        ${trainings.some(t=>t.statusKey==='sin-definir')?trainingGroupHtml('Sin fecha de vigencia','sin-definir','status-sin-definir',trainings,ctx):''}`;
     }
 
-    function renderTrainingGroup(title,key,cls,trainings){
+    function trainingGroupHtml(title,key,cls,trainings,ctx){
       const rows=trainings.filter(t=>t.statusKey===key);
-      return `<div class="training-section"><div class="training-section-head"><span class="badge ${cls}">${esc(title)}</span><h3>${rows.length} capacitación(es)</h3></div>${rows.length?`<div class="training-cards">${rows.map(renderTrainingCard).join('')}</div>`:'<div class="section-empty">No hay capacitaciones en esta categoría.</div>'}</div>`;
+      return `<div class="training-section"><div class="training-section-head"><span class="badge ${cls}">${esc(title)}</span><h3>${rows.length} capacitación(es)</h3></div>${rows.length?`<div class="training-cards">${rows.map(t=>trainingCardHtml(t,ctx)).join('')}</div>`:'<div class="section-empty">No hay capacitaciones en esta categoría.</div>'}</div>`;
     }
 
-    function renderTrainingCard(t){
-      return `<div class="training-card"><div class="training-card-head"><h4>${esc(t.course)}</h4><span class="badge status-${esc(t.statusKey)}">${esc(t.status)}</span></div><div class="training-meta"><div><span>Fecha del curso</span><b>${fmtDate(t.dateTaken)}</b></div><div><span>Vigencia</span><b>${fmtDate(t.expiryDate)}</b></div></div><div class="btn-row">${t.hasDc3?`<button class="btn btn-soft btn-sm" onclick="openDc3('${t.id}')"><i class="fa-solid fa-file-pdf"></i>Ver DC3</button><button class="btn btn-gray btn-sm" onclick="printDc3('${t.id}')"><i class="fa-solid fa-print"></i>Imprimir</button>`:'<span class="badge badge-none"><i class="fa-solid fa-file-circle-xmark"></i>DC3 no disponible</span>'}</div></div>`;
+    function daysLeftText(t){
+      if(t.daysToExpiry===null||t.daysToExpiry===undefined)return '';
+      if(t.daysToExpiry<0)return `Venció hace ${-t.daysToExpiry} día(s)`;
+      if(t.daysToExpiry===0)return 'Vence hoy';
+      return `Vence en ${t.daysToExpiry} día(s)`;
+    }
+
+    function trainingCardHtml(t,ctx){
+      const view=t.hasDc3?`<button class="btn btn-soft btn-sm" onclick="openDc3('${attr(t.id)}',${ctx.publicView})"><i class="fa-solid fa-file-pdf"></i>Ver DC3</button>`:'<span class="badge badge-none"><i class="fa-solid fa-file-circle-xmark"></i>DC3 no disponible</span>';
+      const print=t.hasDc3&&ctx.canPrint?`<button class="btn btn-gray btn-sm" onclick="printDc3('${attr(t.id)}')"><i class="fa-solid fa-print"></i>Imprimir</button>`:'';
+      const manual=!ctx.publicView&&t.manualStatus&&t.manualStatus!==t.status?`<div class="days-left">Estatus manual: ${esc(t.manualStatus)}</div>`:'';
+      return `<div class="training-card"><div class="training-card-head"><h4>${esc(t.course)}</h4><span class="badge status-${esc(t.statusKey)}">${esc(t.status)}</span></div><div class="training-meta"><div><span>Fecha del curso</span><b>${fmtDate(t.dateTaken)}</b></div><div><span>Vigencia</span><b>${fmtDate(t.expiryDate)}</b><div class="days-left">${daysLeftText(t)}</div></div></div>${manual}<div class="btn-row">${view}${print}</div></div>`;
     }
 
     async function toggleScanner(){if(SCANNER_STREAM){stopScanner();return}await startScanner()}
@@ -429,25 +610,61 @@
     function stopScanner(){if(SCANNER_FRAME)cancelAnimationFrame(SCANNER_FRAME);SCANNER_FRAME=null;if(SCANNER_STREAM)SCANNER_STREAM.getTracks().forEach(t=>t.stop());SCANNER_STREAM=null;if($('scanner'))$('scanner').classList.remove('active');if($('camera-button'))$('camera-button').innerHTML='<i class="fa-solid fa-camera"></i>Usar cámara'}
 
     // ── DC3 ──────────────────────────────────────────────────────────────────
-    async function getDc3Object(trainingId){
-      const cached=DC3_CACHE.get(trainingId);if(cached&&Date.now()-cached.created<15*60*1000)return cached;if(cached){try{URL.revokeObjectURL(cached.url)}catch(e){}DC3_CACHE.delete(trainingId)}
-      const r=await api({action:'getDc3',token:SESSION.token,trainingId});if(!r.success)throw new Error(r.error);
+    // 2.1: el PDF se dibuja como imagen (PDF.js) en modo solo vista. Solo un
+    // administrador recibe el enlace del PDF para imprimir o abrir en pestaña.
+    async function getDc3Object(trainingId,publicView=false){
+      const key=(publicView?'pub:':'ses:')+trainingId;
+      const cached=DC3_CACHE.get(key);if(cached&&Date.now()-cached.created<15*60*1000)return cached;if(cached){if(cached.url){try{URL.revokeObjectURL(cached.url)}catch(e){}}DC3_CACHE.delete(key)}
+      const r=publicView?await api({action:'publicGetDc3',qr:PUBLIC_QR,trainingId},false):await api({action:'getDc3',token:SESSION.token,trainingId});
+      if(!r.success)throw new Error(r.error);
       const binary=atob(r.base64);const bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
-      const url=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));const obj={url,name:r.fileName||'DC3.pdf',trainingId,created:Date.now()};DC3_CACHE.set(trainingId,obj);return obj;
+      const canPrint=!publicView&&isAdmin()&&r.canPrint!==false;
+      const obj={bytes,name:r.fileName||'DC3.pdf',trainingId,canPrint,created:Date.now(),url:canPrint?URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})):''};
+      DC3_CACHE.set(key,obj);return obj;
     }
-    async function openDc3(trainingId){
-      CURRENT_DC3=null;$('dc3-title').textContent='DC3';$('dc3-subtitle').textContent='';$('dc3-loading').innerHTML='<div><i class="fa-solid fa-spinner spin"></i><br><b>Cargando PDF…</b></div>';$('dc3-loading').classList.remove('hidden');$('dc3-frame').classList.add('hidden');$('dc3-frame').src='about:blank';openModal('dc3-modal');
-      try{CURRENT_DC3=await getDc3Object(trainingId);$('dc3-title').textContent=CURRENT_DC3.name;$('dc3-subtitle').textContent='Documento protegido por sesión';$('dc3-frame').src=CURRENT_DC3.url;$('dc3-frame').classList.remove('hidden');$('dc3-loading').classList.add('hidden')}catch(e){$('dc3-loading').innerHTML=`<div><i class="fa-solid fa-circle-exclamation" style="color:#F87171"></i><br><b>No fue posible abrir la DC3</b><p style="font-size:.72rem">${esc(e.message)}</p></div>`}
+    async function openDc3(trainingId,publicView=false){
+      CURRENT_DC3=null;$('dc3-title').textContent='DC3';$('dc3-subtitle').textContent='';
+      $('dc3-loading').innerHTML='<div><i class="fa-solid fa-spinner spin"></i><br><b>Cargando DC3…</b></div>';$('dc3-loading').classList.remove('hidden');
+      $('dc3-viewer').classList.add('hidden');$('dc3-viewer').innerHTML='';$('dc3-note').classList.add('hidden');
+      ['dc3-print','dc3-open-tab'].forEach(id=>$(id).classList.add('hidden'));openModal('dc3-modal');
+      try{
+        const obj=await getDc3Object(trainingId,publicView);CURRENT_DC3=obj;
+        $('dc3-title').textContent=obj.name;$('dc3-subtitle').textContent=obj.canPrint?'Administrador Training · impresión habilitada':'Solo consulta';
+        $('dc3-viewer').classList.remove('hidden');
+        await renderPdfPages($('dc3-viewer'),obj.bytes,!obj.canPrint);
+        $('dc3-loading').classList.add('hidden');$('dc3-note').classList.toggle('hidden',obj.canPrint);
+        ['dc3-print','dc3-open-tab'].forEach(id=>$(id).classList.toggle('hidden',!obj.canPrint));
+      }catch(e){$('dc3-viewer').classList.add('hidden');$('dc3-loading').innerHTML=`<div><i class="fa-solid fa-circle-exclamation" style="color:#F87171"></i><br><b>No fue posible abrir la DC3</b><p style="font-size:.72rem">${esc(e.message)}</p></div>`}
     }
-    async function printDc3(trainingId){try{showLoader('Preparando DC3 para impresión…');const obj=await getDc3Object(trainingId);CURRENT_DC3=obj;await registerPrint(trainingId);printPdfObject(obj)}catch(e){toast(e.message,'err')}finally{hideLoader()}}
+    async function renderPdfPages(container,bytes,watermark){
+      if(!window.pdfjsLib)throw new Error('No se pudo cargar el visor de PDF. Revisa la conexión a internet.');
+      pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS_WORKER;
+      const pdf=await pdfjsLib.getDocument({data:bytes.slice(0)}).promise;
+      container.innerHTML='';
+      const available=Math.max(280,container.clientWidth-24),ratio=Math.min(window.devicePixelRatio||1,2);
+      for(let n=1;n<=pdf.numPages;n++){
+        const page=await pdf.getPage(n);const base=page.getViewport({scale:1});
+        const cssScale=Math.min(1.6,available/base.width);const vp=page.getViewport({scale:cssScale*ratio});
+        const canvas=document.createElement('canvas');canvas.width=Math.floor(vp.width);canvas.height=Math.floor(vp.height);canvas.style.width=Math.floor(vp.width/ratio)+'px';
+        const ctx=canvas.getContext('2d');await page.render({canvasContext:ctx,viewport:vp}).promise;
+        if(watermark)drawWatermark(ctx,canvas.width,canvas.height);
+        const wrap=document.createElement('div');wrap.className='pdf-page';wrap.appendChild(canvas);container.appendChild(wrap);
+      }
+    }
+    function drawWatermark(ctx,w,h){
+      ctx.save();ctx.translate(w/2,h/2);ctx.rotate(-Math.atan2(h,w));ctx.textAlign='center';ctx.textBaseline='middle';
+      const size=Math.round(Math.min(w,h)/11);ctx.font=`700 ${size}px "DM Sans",Arial,sans-serif`;ctx.fillStyle='rgba(220,38,38,.16)';
+      ctx.fillText('SOLO CONSULTA',0,-size*0.7);ctx.font=`700 ${Math.round(size*0.45)}px "DM Sans",Arial,sans-serif`;ctx.fillText('KTMEX TRAINING · NO VÁLIDA IMPRESA',0,size*0.35);ctx.restore();
+    }
+    async function printDc3(trainingId){if(!isAdmin()){toast('Solo Entrenamiento puede imprimir la DC3.','err');return}try{showLoader('Preparando DC3 para impresión…');const obj=await getDc3Object(trainingId);CURRENT_DC3=obj;if(!obj.canPrint)throw new Error('Solo Entrenamiento puede imprimir la DC3.');await registerPrint(trainingId);printPdfObject(obj)}catch(e){toast(e.message,'err')}finally{hideLoader()}}
     async function registerPrint(trainingId){const r=await api({action:'registerDc3Print',token:SESSION.token,trainingId});if(!r.success)throw new Error(r.error)}
     function printPdfObject(obj){
       const frame=document.createElement('iframe');frame.style.cssText='position:fixed;width:1px;height:1px;right:0;bottom:0;border:0;opacity:0';frame.src=obj.url;document.body.appendChild(frame);
       frame.onload=()=>setTimeout(()=>{try{frame.contentWindow.focus();frame.contentWindow.print();toast('Se abrió el diálogo de impresión.','ok')}catch(e){window.open(obj.url,'_blank');toast('El navegador abrió la DC3; usa su botón Imprimir.','info')}setTimeout(()=>frame.remove(),90000)},600);
     }
-    function openCurrentDc3Tab(){if(!CURRENT_DC3){toast('Espera a que termine de cargar la DC3.','err');return}window.open(CURRENT_DC3.url,'_blank','noopener')}
-    async function printCurrentDc3(){if(!CURRENT_DC3){toast('Espera a que termine de cargar la DC3.','err');return}try{await registerPrint(CURRENT_DC3.trainingId);printPdfObject(CURRENT_DC3)}catch(e){toast(e.message,'err')}}
-    function closeDc3Modal(){$('dc3-frame').src='about:blank';closeModal('dc3-modal')}
+    function openCurrentDc3Tab(){if(!CURRENT_DC3?.canPrint){toast('Disponible solo para Entrenamiento.','err');return}window.open(CURRENT_DC3.url,'_blank','noopener')}
+    async function printCurrentDc3(){if(!CURRENT_DC3?.canPrint){toast('Solo Entrenamiento puede imprimir la DC3.','err');return}try{await registerPrint(CURRENT_DC3.trainingId);printPdfObject(CURRENT_DC3)}catch(e){toast(e.message,'err')}}
+    function closeDc3Modal(){$('dc3-viewer').innerHTML='';closeModal('dc3-modal')}
 
     // ── Capacitaciones ────────────────────────────────────────────────────────
     async function loadTrainings(){
@@ -458,7 +675,7 @@
     function renderTrainings(){
       const q=normalize($('training-search')?.value),dept=$('training-department')?.value||'',status=$('training-status')?.value||'';
       const rows=TRAININGS.filter(t=>(!q||normalize([t.employeeNo,t.workerName,t.department,t.position,t.course].join(' ')).includes(q))&&(!dept||t.department===dept)&&(!status||t.status===status));
-      $('training-body').innerHTML=rows.length?rows.map(t=>`<tr><td class="mono nowrap">${esc(t.employeeNo)}</td><td><b>${esc(t.workerName)}</b></td><td><b>${esc(t.department)}</b><br><span style="color:#64748B">${esc(t.position)}</span></td><td><b>${esc(t.course)}</b></td><td class="nowrap">${fmtDate(t.dateTaken)}</td><td class="nowrap">${fmtDate(t.expiryDate)}</td><td><span class="badge status-${esc(t.statusKey)}">${esc(t.status)}</span></td><td>${t.hasDc3?'<span class="badge badge-dc3"><i class="fa-solid fa-file-pdf"></i>Disponible</span>':'<span class="badge badge-none">Pendiente</span>'}</td><td><div class="btn-row">${t.hasDc3?`<button class="btn btn-soft btn-sm" title="Ver DC3" onclick="openDc3('${t.id}')"><i class="fa-solid fa-eye"></i></button><button class="btn btn-gray btn-sm" title="Imprimir DC3" onclick="printDc3('${t.id}')"><i class="fa-solid fa-print"></i></button>`:''}<button class="btn btn-gray btn-sm" title="Editar" onclick="openTrainingModal('${t.id}')"><i class="fa-solid fa-pen"></i></button></div></td></tr>`).join(''):'<tr><td colspan="9" class="empty-cell">No hay capacitaciones con esos filtros.</td></tr>';
+      $('training-body').innerHTML=rows.length?rows.map(t=>`<tr><td class="mono nowrap">${esc(t.employeeNo)}</td><td><b>${esc(t.workerName)}</b></td><td><b>${esc(t.department)}</b><br><span style="color:#64748B">${esc(t.position)}</span></td><td><b>${esc(t.course)}</b></td><td class="nowrap">${fmtDate(t.dateTaken)}</td><td class="nowrap">${fmtDate(t.expiryDate)}</td><td><span class="badge status-${esc(t.statusKey)}">${esc(t.status)}</span>${t.computedStatus&&t.computedStatus!==t.status?`<div class="days-left">Según fecha: ${esc(t.computedStatus)}</div>`:''}</td><td>${t.hasDc3?'<span class="badge badge-dc3"><i class="fa-solid fa-file-pdf"></i>Disponible</span>':'<span class="badge badge-none">Pendiente</span>'}</td><td><div class="btn-row">${t.hasDc3?`<button class="btn btn-soft btn-sm" title="Ver DC3" onclick="openDc3('${t.id}')"><i class="fa-solid fa-eye"></i></button><button class="btn btn-gray btn-sm" title="Imprimir DC3" onclick="printDc3('${t.id}')"><i class="fa-solid fa-print"></i></button>`:''}<button class="btn btn-gray btn-sm" title="Editar" onclick="openTrainingModal('${t.id}')"><i class="fa-solid fa-pen"></i></button></div></td></tr>`).join(''):'<tr><td colspan="9" class="empty-cell">No hay capacitaciones con esos filtros.</td></tr>';
     }
     function openTrainingModal(id=''){
       const t=TRAININGS.find(x=>x.id===id);$('training-id').value=t?.id||'';$('training-modal-title').textContent=t?'Editar capacitación':'Agregar capacitación';
@@ -477,19 +694,193 @@
       }catch(e){toast(e.message,'err')}finally{hideLoader();btn.disabled=false}
     }
 
+    // ── Programación de capacitaciones ───────────────────────────────────────
+    function shiftLabel(code){return {'ROTATIVO A':'Rotativo A','ROTATIVO B':'Rotativo B','FIJO 1':'Fijo 1°','FIJO 2':'Fijo 2°'}[code]||'Sin turno'}
+    function shiftBadge(n){const v=String(n||'').replace('°','');return v==='1'?'<span class="badge badge-shift1">1° turno</span>':v==='2'?'<span class="badge badge-shift2">2° turno</span>':'<span class="badge badge-none">—</span>'}
+    function sessionDateText(iso){if(!iso)return '—';const m=iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);const wd=new Date(Date.UTC(+m[1],+m[2]-1,+m[3])).getUTCDay();return `${WEEKDAYS[wd]} ${fmtDate(iso)}`}
+    function addDaysClient(iso,days){const m=iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);const d=new Date(Date.UTC(+m[1],+m[2]-1,+m[3]+days));return d.toISOString().slice(0,10)}
+
+    async function loadSchedule(){
+      const [r,c]=await Promise.all([api({action:'listSchedule',token:SESSION.token}),api({action:'listCatalogs',token:SESSION.token})]);
+      if(!r.success)throw new Error(r.error);if(c.success){CATALOGS=c;fillCatalogControls()}
+      SCHEDULE=r;renderScheduleConfig();renderScheduleKpis();renderSessions();renderNeeds();
+      if($('participants-modal').classList.contains('open')&&CURRENT_SESSION_ID)renderParticipants();
+    }
+    function renderScheduleConfig(){
+      const c=SCHEDULE.config;$('cfg-t1-start').value=c.t1Start;$('cfg-t1-end').value=c.t1End;$('cfg-t2-start').value=c.t2Start;$('cfg-t2-end').value=c.t2End;$('cfg-ref').value=c.referenceDate||'';$('cfg-window').value=c.windowDays;$('rot-weeks').textContent=c.rotationWeeks;
+      const alerts=[];
+      if(!c.currentWeek){alerts.push('<b>Falta la fecha de referencia de la rotación.</b> Captúrala en "Turnos y rotación" para poder programar a los trabajadores rotativos.');$('week-banner').innerHTML='<div class="week-chip"><span>Quincena actual</span><b>Sin configurar</b></div>'}
+      else{
+        const start=c.currentWeek.blockStart,end=addDaysClient(start,c.rotationWeeks*7-1),next=addDaysClient(start,c.rotationWeeks*7);
+        $('week-banner').innerHTML=`<div class="week-chip t${c.currentWeek.A}"><span>Grupo A · ${fmtDate(start)} – ${fmtDate(end)}</span><b>${c.currentWeek.A}° turno</b></div><div class="week-chip t${c.currentWeek.B}"><span>Grupo B · ${fmtDate(start)} – ${fmtDate(end)}</span><b>${c.currentWeek.B}° turno</b></div><div class="week-chip"><span>Próxima rotación</span><b>${sessionDateText(next)}</b></div>`;
+      }
+      if(SCHEDULE.workersWithoutShift)alerts.push(`<b>${SCHEDULE.workersWithoutShift} trabajador(es) sin turno.</b> No se pueden programar automáticamente; asigna su turno en Trabajadores o importa la columna TURNO.`);
+      const noValidity=(CATALOGS.courses||[]).filter(x=>!x.validityMonths).map(x=>x.name);
+      if(noValidity.length)alerts.push(`<b>Cursos sin vigencia en meses:</b> ${esc(noValidity.join(', '))}. Configúrala en Catálogos para poder registrar asistencia.`);
+      $('schedule-alert').innerHTML=alerts.join('<br>');$('schedule-alert').classList.toggle('hidden',!alerts.length);
+      $('needs-caption').textContent=`Capacitación vencida o que vence en los próximos ${c.windowDays} días (se muestra la más reciente de cada curso).`;
+    }
+    function upcomingSessions(){return (SCHEDULE?.sessions||[]).filter(s=>s.status!=='Cancelada'&&s.date>=SCHEDULE.today)}
+    function renderScheduleKpis(){
+      const up=upcomingSessions();
+      $('s-k-sessions').textContent=up.length;
+      $('s-k-enrolled').textContent=up.reduce((n,s)=>n+s.participants.filter(p=>p.status==='Programado').length,0);
+      $('s-k-pending').textContent=(SCHEDULE.needs||[]).filter(n=>!n.programmedSessionId).length;
+      $('s-k-permits').textContent=up.reduce((n,s)=>n+s.permits,0);
+      $('s-k-noshift').textContent=SCHEDULE.workersWithoutShift||0;
+    }
+    function sessionStatusBadge(s){if(s.status==='Cancelada')return '<span class="badge status-vencida">Cancelada</span>';if(s.date<SCHEDULE.today)return '<span class="badge status-sin-definir">Realizada</span>';return '<span class="badge status-vigente">Programada</span>'}
+    function renderSessions(){
+      if(!SCHEDULE)return;const q=normalize($('session-search').value),showPast=$('session-show-past').checked;
+      const rows=SCHEDULE.sessions.filter(s=>(showPast||(s.status!=='Cancelada'&&s.date>=SCHEDULE.today))&&(!q||normalize([s.course,s.place,s.instructor].join(' ')).includes(q)));
+      $('session-body').innerHTML=rows.length?rows.map(s=>{
+        const pct=s.capacity?Math.min(100,Math.round(s.enrolled/s.capacity*100)):0,past=s.status==='Cancelada'||s.date<SCHEDULE.today;
+        return `<tr class="${s.status==='Cancelada'?'row-muted':''}"><td class="nowrap"><b>${sessionDateText(s.date)}</b>${s.weekday===6?'<div class="days-left">Sábado · 2° turno con permiso</div>':''}</td><td class="nowrap mono">${esc(s.start)}–${esc(s.end)}</td><td><b>${esc(s.course)}</b></td><td>${esc(s.place||'—')}<br><span style="color:#64748B">${esc(s.instructor||'')}</span></td><td class="nowrap"><b>${s.enrolled}</b> / ${s.capacity}<div class="cap-bar ${s.enrolled>=s.capacity?'full':''}"><i style="width:${pct}%"></i></div></td><td>${s.permits?`<span class="badge badge-permit"><i class="fa-solid fa-door-open"></i>${s.permits}</span>`:'—'}</td><td>${sessionStatusBadge(s)}</td><td><div class="btn-row"><button class="btn btn-soft btn-sm" title="Participantes" onclick="openParticipants('${attr(s.id)}')"><i class="fa-solid fa-users"></i>${s.participants.length}</button>${past?'':`<button class="btn btn-gray btn-sm" title="Sugerir participantes" onclick="proposeSchedule('${attr(s.id)}')"><i class="fa-solid fa-wand-magic-sparkles"></i></button>`}<button class="btn btn-gray btn-sm" title="Editar" onclick="openSessionModal('${attr(s.id)}')"><i class="fa-solid fa-pen"></i></button>${s.status!=='Cancelada'&&s.date>=SCHEDULE.today?`<button class="btn btn-red btn-sm" title="Cancelar sesión" onclick="cancelSessionUI('${attr(s.id)}')"><i class="fa-solid fa-ban"></i></button>`:''}</div></td></tr>`}).join(''):'<tr><td colspan="8" class="empty-cell">No hay sesiones. Carga el calendario desde Excel o crea una sesión.</td></tr>';
+    }
+    function renderNeeds(){
+      if(!SCHEDULE)return;const q=normalize($('needs-search').value),f=$('needs-filter').value;const byId={};SCHEDULE.sessions.forEach(s=>byId[s.id]=s);
+      const rows=(SCHEDULE.needs||[]).filter(n=>(f==='all'||(f==='pending'?!n.programmedSessionId:Boolean(n.programmedSessionId)))&&(!q||normalize([n.employeeNo,n.name,n.department,n.course].join(' ')).includes(q)));
+      $('needs-body').innerHTML=rows.length?rows.map(n=>{const s=byId[n.programmedSessionId];return `<tr><td class="mono">${esc(n.employeeNo)}</td><td><b>${esc(n.name)}</b></td><td>${esc(n.department)}</td><td>${n.shift?esc(shiftLabel(n.shift)):'<span class="badge badge-warn">Sin turno</span>'}</td><td><b>${esc(n.course)}</b></td><td class="nowrap">${fmtDate(n.expiryDate)}<div class="days-left">${daysLeftText(n)}</div></td><td><span class="badge status-${esc(n.statusKey)}">${esc(n.status)}</span></td><td class="nowrap">${s?`<span class="badge status-vigente">${sessionDateText(s.date)} ${esc(s.start)}</span>`:'<span class="badge badge-none">Sin sesión</span>'}</td></tr>`}).join(''):`<tr><td colspan="8" class="empty-cell">${f==='pending'?'Todo el personal pendiente ya tiene sesión asignada.':'Sin registros.'}</td></tr>`;
+    }
+    async function saveShiftConfigUI(){
+      showLoader('Guardando turnos…');
+      try{const r=await api({action:'saveShiftConfig',token:SESSION.token,t1Start:$('cfg-t1-start').value,t1End:$('cfg-t1-end').value,t2Start:$('cfg-t2-start').value,t2End:$('cfg-t2-end').value,referenceDate:$('cfg-ref').value,windowDays:Number($('cfg-window').value)});if(!r.success)throw new Error(r.error);toast(r.message||'Turnos guardados.','ok');await loadSchedule()}catch(e){toast(e.message,'err')}finally{hideLoader()}
+    }
+
+    // Sesiones
+    function openSessionModal(id=''){
+      const s=(SCHEDULE?.sessions||[]).find(x=>x.id===id);$('session-id').value=s?.id||'';$('session-modal-title').textContent=s?'Editar sesión':'Nueva sesión de curso';
+      $('session-course').value=s?.course||'';$('session-date').value=s?.date||'';$('session-start').value=s?.start||'08:00';$('session-end').value=s?.end||'12:00';$('session-capacity').value=s?.capacity||10;$('session-instructor').value=s?.instructor||'';$('session-place').value=s?.place||'';$('session-notes').value=s?.notes||'';sessionDateHint();openModal('session-modal');
+    }
+    function sessionDateHint(){
+      const d=$('session-date').value,el=$('session-date-hint');if(!d){el.textContent='';return}
+      const c=SCHEDULE?.config;let text=sessionDateText(d);
+      if(c?.referenceDate){const weeks=Math.floor((Date.parse(mondayClient(d))-Date.parse(mondayClient(c.referenceDate)))/(7*86400000));const block=Math.floor(weeks/c.rotationWeeks);const a=((block%2)+2)%2===0?1:2;text+=` · Grupo A en ${a}° turno, Grupo B en ${3-a}° turno`}
+      if(new Date(d+'T12:00:00Z').getUTCDay()===6)text+=' · Sábado: 2° turno con permiso de salida anticipada';
+      el.textContent=text;
+    }
+    function mondayClient(iso){const m=iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);const d=new Date(Date.UTC(+m[1],+m[2]-1,+m[3]));const wd=d.getUTCDay();d.setUTCDate(d.getUTCDate()+(wd===0?-6:1-wd));return d.toISOString().slice(0,10)}
+    async function saveSessionUI(){
+      showLoader('Guardando sesión…');
+      try{
+        const r=await api({action:'saveCourseSession',token:SESSION.token,id:$('session-id').value,course:$('session-course').value,date:$('session-date').value,start:$('session-start').value,end:$('session-end').value,capacity:Number($('session-capacity').value),instructor:$('session-instructor').value,place:$('session-place').value,notes:$('session-notes').value});
+        if(!r.success)throw new Error(r.error);closeModal('session-modal');
+        if(r.warnings?.length)toast('Sesión guardada. Revisa: '+r.warnings.join(' | '),'info');else toast('Sesión guardada.','ok');
+        await loadSchedule();
+      }catch(e){toast(e.message,'err')}finally{hideLoader()}
+    }
+    async function cancelSessionUI(id){
+      const s=SCHEDULE.sessions.find(x=>x.id===id);if(!s)return;
+      if(!confirm(`¿Cancelar la sesión de ${s.course} del ${sessionDateText(s.date)}? Las ${s.enrolled} persona(s) programadas quedarán liberadas.`))return;
+      showLoader('Cancelando sesión…');try{const r=await api({action:'cancelCourseSession',token:SESSION.token,id});if(!r.success)throw new Error(r.error);toast(`Sesión cancelada; ${r.released} persona(s) liberadas.`,'ok');await loadSchedule()}catch(e){toast(e.message,'err')}finally{hideLoader()}
+    }
+
+    // Participantes
+    function openParticipants(id){CURRENT_SESSION_ID=id;$('participants-worker').value='';renderParticipants();openModal('participants-modal')}
+    function renderParticipants(){
+      const s=SCHEDULE.sessions.find(x=>x.id===CURRENT_SESSION_ID);if(!s)return;
+      const editable=s.status!=='Cancelada'&&s.date>=SCHEDULE.today;
+      $('participants-title').textContent=`${s.course} · ${sessionDateText(s.date)}`;
+      $('participants-subtitle').textContent=`${s.start}–${s.end} · ${s.place||'Sin lugar'} · ${s.instructor||'Sin instructor'} · Cupo ${s.enrolled}/${s.capacity}`;
+      $('participants-add').classList.toggle('hidden',!editable);
+      $('participants-worker-list').innerHTML=(SCHEDULE.workers||[]).map(w=>`<option value="${attr(w.employeeNo+' · '+w.name)}">${esc(shiftLabel(w.shift))}</option>`).join('');
+      const statuses=['Programado','Asistió','No asistió','Cancelado'];
+      $('participants-body').innerHTML=s.participants.length?s.participants.map(p=>`<tr class="${p.status==='Cancelado'?'row-muted':''}"><td class="mono">${esc(p.employeeNo)}</td><td><b>${esc(p.name)}</b><br><span style="color:#64748B">${esc(p.department)}</span></td><td>${esc(shiftLabel(p.shift))}</td><td>${shiftBadge(p.shiftOnDate)}</td><td>${p.permit?'<span class="badge badge-permit"><i class="fa-solid fa-door-open"></i>Permiso de salida anticipada</span>':''}${p.exception?`<div class="days-left" style="color:#B45309">${esc(p.exception)}</div>`:''}</td><td><select class="inp" style="min-width:130px;padding:6px 8px" onchange="setEnrollmentStatus('${attr(p.id)}',this.value,this)">${statuses.map(x=>`<option ${x===p.status?'selected':''}>${x}</option>`).join('')}</select></td></tr>`).join(''):'<tr><td colspan="6" class="empty-cell">Sin participantes. Usa "Sugerir para esta sesión" o agrega manualmente.</td></tr>';
+    }
+    function findWorkerFromInput(value){const v=normalize(value);if(!v)return null;return (SCHEDULE.workers||[]).find(w=>normalize(w.employeeNo+' · '+w.name)===v||normalize(w.employeeNo)===v)||null}
+    async function addParticipantUI(override=false,reason=''){
+      if(!override)PENDING_OVERRIDE=null;
+      const w=PENDING_OVERRIDE?.worker||findWorkerFromInput($('participants-worker').value);if(!w){toast('Selecciona un trabajador de la lista.','err');return}
+      showLoader('Programando…');
+      try{
+        const r=await api({action:'addEnrollment',token:SESSION.token,sessionId:CURRENT_SESSION_ID,workerId:w.id,override,overrideReason:reason});
+        if(!r.success&&r.needsOverride){PENDING_OVERRIDE={worker:w};$('override-warnings').innerHTML=`<b>${esc(w.employeeNo)} · ${esc(w.name)}</b><br>${r.warnings.map(esc).join('<br>')}`;$('override-reason').value='';openModal('override-modal');return}
+        if(!r.success)throw new Error(r.error);
+        PENDING_OVERRIDE=null;closeModal('override-modal');$('participants-worker').value='';toast(r.permit?'Programado. Requiere permiso de salida anticipada.':'Trabajador programado.','ok');await loadSchedule();
+      }catch(e){PENDING_OVERRIDE=null;toast(e.message,'err')}finally{hideLoader()}
+    }
+    function confirmOverride(){const reason=$('override-reason').value.trim();if(!reason){toast('Escribe el motivo de la excepción.','err');return}addParticipantUI(true,reason)}
+    async function setEnrollmentStatus(id,status,select){
+      showLoader('Actualizando…');
+      try{const r=await api({action:'updateEnrollmentStatus',token:SESSION.token,id,status});if(!r.success)throw new Error(r.error);toast(r.trainingId?'Asistencia registrada; se creó la capacitación con su nueva vigencia. Sube la DC3 en Capacitaciones.':'Estatus actualizado.','ok');await loadSchedule()}
+      catch(e){toast(e.message,'err');renderParticipants()}finally{hideLoader()}
+    }
+    function printAttendance(){
+      const s=SCHEDULE.sessions.find(x=>x.id===CURRENT_SESSION_ID);if(!s)return;const list=s.participants.filter(p=>p.status!=='Cancelado');
+      const win=window.open('','_blank','width=900,height=700');if(!win){toast('Permite ventanas emergentes para imprimir.','err');return}
+      win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Lista de asistencia</title><style>body{font-family:Arial,sans-serif;color:#0A1628;padding:24px}h1{font-size:18px;margin:0}p{font-size:12px;margin:4px 0}table{width:100%;border-collapse:collapse;margin-top:14px}th,td{border:1px solid #94A3B8;padding:7px;font-size:11px;text-align:left}th{background:#E2E8F0}td.f{width:150px}@media print{button{display:none}}</style></head><body><div style="font-size:10px;font-weight:bold;letter-spacing:2px;color:#2563EB">KTMEX TRAINING</div><h1>Lista de asistencia · ${esc(s.course)}</h1><p><b>Fecha:</b> ${sessionDateText(s.date)} &nbsp; <b>Horario:</b> ${esc(s.start)}–${esc(s.end)} &nbsp; <b>Lugar:</b> ${esc(s.place||'—')} &nbsp; <b>Instructor:</b> ${esc(s.instructor||'—')}</p><table><thead><tr><th>#</th><th>No.</th><th>Nombre</th><th>Departamento</th><th>Turno ese día</th><th>Permiso salida anticipada</th><th>Firma</th></tr></thead><tbody>${list.map((p,i)=>`<tr><td>${i+1}</td><td>${esc(p.employeeNo)}</td><td>${esc(p.name)}</td><td>${esc(p.department)}</td><td>${esc(p.shiftOnDate||'—')}</td><td>${p.permit?'Sí':'No'}</td><td class="f"></td></tr>`).join('')||'<tr><td colspan="7">Sin participantes</td></tr>'}</tbody></table><br><button onclick="window.print()">Imprimir</button><script>setTimeout(()=>window.print(),400)<\/script></body></html>`);win.document.close();
+    }
+
+    // Propuesta automática
+    async function proposeSchedule(sessionId=''){
+      showLoader('Calculando propuesta…');
+      try{
+        const r=await api({action:'proposeSchedule',token:SESSION.token,sessionId});if(!r.success)throw new Error(r.error);
+        PROPOSAL=r;const s=sessionId?SCHEDULE.sessions.find(x=>x.id===sessionId):null;
+        $('proposal-subtitle').textContent=(s?`${s.course} · ${sessionDateText(s.date)} · `:'Todas las sesiones próximas · ')+`${r.proposals.length} propuesta(s), ${r.unassigned.length} sin sesión compatible`;
+        $('proposal-all').checked=true;
+        $('proposal-body').innerHTML=r.proposals.length?r.proposals.map((p,i)=>`<tr><td><input type="checkbox" class="proposal-check" data-i="${i}" checked></td><td class="mono">${esc(p.employeeNo)}</td><td><b>${esc(p.name)}</b><br><span style="color:#64748B">${esc(p.department)}</span></td><td>${esc(shiftLabel(p.shift))}<br>${shiftBadge(p.shiftOnDate)}</td><td><b>${esc(p.course)}</b></td><td class="nowrap">${fmtDate(p.expiryDate)}<br><span class="badge status-${esc(p.statusKey)}">${esc(p.status)}</span></td><td class="nowrap"><b>${sessionDateText(p.sessionDate)}</b><br><span class="mono">${esc(p.sessionStart)}–${esc(p.sessionEnd)}</span></td><td>${p.permit?'<span class="badge badge-permit"><i class="fa-solid fa-door-open"></i>Permiso de salida</span> ':''}${p.afterExpiry?'<span class="badge badge-warn">Después de vencer</span>':''}</td></tr>`).join(''):'<tr><td colspan="8" class="empty-cell">No hay personas que se puedan programar con las sesiones actuales.</td></tr>';
+        $('proposal-unassigned').innerHTML=r.unassigned.length?`<div class="notice notice-warn" style="margin-bottom:8px"><b>${r.unassigned.length} persona(s) sin sesión compatible.</b> Crea otra sesión (por ejemplo en sábado o en la quincena en que estén en 1° turno) o corrige su turno.</div><div class="table-wrap"><table class="table" style="min-width:700px"><thead><tr><th>No.</th><th>Trabajador</th><th>Turno</th><th>Curso</th><th>Vence</th><th>Motivo</th></tr></thead><tbody>${r.unassigned.map(u=>`<tr><td class="mono">${esc(u.employeeNo)}</td><td><b>${esc(u.name)}</b></td><td>${esc(shiftLabel(u.shift))}</td><td>${esc(u.course)}</td><td class="nowrap">${fmtDate(u.expiryDate)}</td><td>${esc(u.reason)}</td></tr>`).join('')}</tbody></table></div>`:'';
+        $('proposal-confirm').disabled=!r.proposals.length;openModal('proposal-modal');
+      }catch(e){toast(e.message,'err')}finally{hideLoader()}
+    }
+    async function confirmProposal(){
+      const picked=[...document.querySelectorAll('.proposal-check')].filter(c=>c.checked).map(c=>PROPOSAL.proposals[Number(c.dataset.i)]);
+      if(!picked.length){toast('Selecciona al menos una persona.','err');return}
+      const btn=$('proposal-confirm');btn.disabled=true;showLoader('Guardando programación…');
+      try{const r=await api({action:'confirmSchedule',token:SESSION.token,assignments:picked.map(p=>({sessionId:p.sessionId,workerId:p.workerId}))});if(!r.success)throw new Error(r.error);closeModal('proposal-modal');toast(`${r.created} persona(s) programadas.`+(r.errors.length?` ${r.errors.length} rechazada(s): `+r.errors.map(e=>e.worker+' – '+e.error).join(' | '):''),r.errors.length?'info':'ok');await loadSchedule()}
+      catch(e){toast(e.message,'err')}finally{hideLoader();btn.disabled=false}
+    }
+
+    // Calendario desde Excel
+    function downloadCalendarTemplate(){
+      const ws=XLSX.utils.aoa_to_sheet([['CURSO','FECHA','HORA_INICIO','HORA_FIN','CUPO','INSTRUCTOR','LUGAR','OBSERVACIONES'],['MONTACARGAS','2026-11-07','08:00','12:00',10,'Nombre del instructor','Aula de capacitación','Sábado: 2° turno con permiso'],['MONTACARGAS','2026-11-11','08:00','12:00',10,'','','']]);
+      ws['!cols']=[{wch:22},{wch:12},{wch:12},{wch:10},{wch:7},{wch:24},{wch:22},{wch:32}];
+      const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Calendario');XLSX.writeFile(wb,'Plantilla_Calendario_Capacitacion.xlsx');
+    }
+    function excelTime(v){if(v===null||v===undefined||v==='')return '';if(typeof v==='number'){const frac=v%1;const mins=Math.round(frac*1440);return String(Math.floor(mins/60)%24).padStart(2,'0')+':'+String(mins%60).padStart(2,'0')}if(v instanceof Date)return String(v.getHours()).padStart(2,'0')+':'+String(v.getMinutes()).padStart(2,'0');return String(v).trim()}
+    async function readCalendarFile(event){
+      const file=event.target.files[0];event.target.value='';if(!file)return;CALENDAR_FILE_NAME=file.name;showLoader('Leyendo calendario…');
+      try{
+        const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});const sheet=wb.Sheets[wb.SheetNames[0]];const matrix=XLSX.utils.sheet_to_json(sheet,{header:1,defval:'',raw:true});
+        const hi=matrix.slice(0,15).findIndex(row=>row.some(v=>headerKey(v)==='CURSO')&&row.some(v=>headerKey(v)==='FECHA'||headerKey(v)==='FECHA SESION'));
+        if(hi<0)throw new Error('No se encontró la fila de encabezados con CURSO y FECHA. Usa la plantilla.');
+        const headers=matrix[hi].map(headerKey);const ix=names=>{for(const n of names){const i=headers.indexOf(n);if(i>=0)return i}return -1};
+        const idx={course:ix(['CURSO','CAPACITACION']),date:ix(['FECHA','FECHA SESION','FECHA CURSO']),start:ix(['HORA INICIO','INICIO','HORA DE INICIO']),end:ix(['HORA FIN','FIN','HORA DE FIN','HORA TERMINO']),capacity:ix(['CUPO','CAPACIDAD','LUGARES']),instructor:ix(['INSTRUCTOR']),place:ix(['LUGAR','SALA','UBICACION']),notes:ix(['OBSERVACIONES','NOTAS'])};
+        const missing=['course','date','start','end','capacity'].filter(k=>idx[k]<0);if(missing.length)throw new Error('Faltan columnas: '+missing.map(k=>({course:'CURSO',date:'FECHA',start:'HORA_INICIO',end:'HORA_FIN',capacity:'CUPO'})[k]).join(', '));
+        const get=(row,k)=>idx[k]>=0?row[idx[k]]:'';
+        CALENDAR_ROWS=matrix.slice(hi+1).map((row,i)=>({sourceRow:hi+i+2,course:cellText(get(row,'course')),date:excelDate(get(row,'date')),start:excelTime(get(row,'start')),end:excelTime(get(row,'end')),capacity:Number(get(row,'capacity'))||'',instructor:cellText(get(row,'instructor')),place:cellText(get(row,'place')),notes:cellText(get(row,'notes'))})).filter(r=>r.course||r.date);
+        if(!CALENDAR_ROWS.length)throw new Error('El archivo no tiene sesiones.');
+        const bad=CALENDAR_ROWS.filter(r=>!r.course||!r.date||!r.start||!r.end||!r.capacity);
+        $('calendar-subtitle').textContent=`${file.name} · ${CALENDAR_ROWS.length} sesión(es)`;
+        $('calendar-warning').textContent=bad.length?`${bad.length} fila(s) incompletas se reportarán como error y no se guardarán.`:'';$('calendar-warning').classList.toggle('hidden',!bad.length);
+        $('calendar-body').innerHTML=CALENDAR_ROWS.slice(0,100).map(r=>`<tr><td>${r.sourceRow}</td><td><b>${esc(r.course)}</b></td><td class="nowrap">${r.date?sessionDateText(r.date):'<span class="badge badge-warn">Falta</span>'}</td><td class="mono">${esc(r.start)||'—'}</td><td class="mono">${esc(r.end)||'—'}</td><td>${esc(r.capacity)||'—'}</td><td>${esc(r.instructor)}</td><td>${esc(r.place)}</td></tr>`).join('')+(CALENDAR_ROWS.length>100?`<tr><td colspan="8" class="empty-cell">Se muestran 100 de ${CALENDAR_ROWS.length}. Todas serán procesadas.</td></tr>`:'');
+        openModal('calendar-modal');
+      }catch(e){toast(e.message,'err')}finally{hideLoader()}
+    }
+    async function confirmCalendarImport(){
+      const btn=$('calendar-confirm');btn.disabled=true;showLoader('Guardando calendario…');
+      try{const r=await api({action:'importCourseSessions',token:SESSION.token,fileName:CALENDAR_FILE_NAME,rows:CALENDAR_ROWS});if(!r.success)throw new Error(r.error);closeModal('calendar-modal');toast(`Calendario actualizado: ${r.created} nueva(s), ${r.updated} actualizada(s).`+(r.errors.length?` Errores: `+r.errors.slice(0,5).map(e=>'fila '+e.row+' – '+e.error).join(' | '):''),r.errors.length?'info':'ok');await loadSchedule()}
+      catch(e){toast(e.message,'err')}finally{hideLoader();btn.disabled=false}
+    }
+
+    // Vigencia de cursos
+    function openCourseModal(name=''){const c=(CATALOGS.courses||[]).find(x=>x.name===name);$('course-name').value=name;$('course-months').value=c?.validityMonths||'';openModal('course-modal')}
+    async function saveCourseUI(){showLoader('Guardando curso…');try{const r=await api({action:'saveCourse',token:SESSION.token,name:$('course-name').value,validityMonths:Number($('course-months').value)});if(!r.success)throw new Error(r.error);closeModal('course-modal');toast('Vigencia guardada.','ok');await loadCatalogs()}catch(e){toast(e.message,'err')}finally{hideLoader()}}
+
     // ── Trabajadores y QR ─────────────────────────────────────────────────────
     async function loadWorkers(){const [r,c]=await Promise.all([api({action:'listWorkers',token:SESSION.token}),api({action:'listCatalogs',token:SESSION.token})]);if(!r.success)throw new Error(r.error);WORKERS=r.workers||[];if(c.success){CATALOGS=c;fillCatalogControls()}renderWorkers()}
     function renderWorkers(){
-      const q=normalize($('worker-search')?.value);const rows=WORKERS.filter(w=>!q||normalize([w.employeeNo,w.name,w.department,w.position].join(' ')).includes(q));
-      $('worker-body').innerHTML=rows.length?rows.map(w=>`<tr><td class="mono"><b>${esc(w.employeeNo)}</b></td><td><b>${esc(w.name)}</b></td><td>${esc(w.department)}</td><td>${esc(w.position)}</td><td><button class="btn btn-soft btn-sm" onclick="openQrLabel('${w.id}')"><i class="fa-solid fa-qrcode"></i>Ver / imprimir</button></td><td><button class="btn btn-gray btn-sm" onclick="openWorkerModal('${w.id}')"><i class="fa-solid fa-pen"></i>Editar</button></td></tr>`).join(''):'<tr><td colspan="6" class="empty-cell">No hay trabajadores con ese filtro.</td></tr>';
+      const q=normalize($('worker-search')?.value);const rows=WORKERS.filter(w=>!q||normalize([w.employeeNo,w.name,w.department,w.position,shiftLabel(w.shift)].join(' ')).includes(q));
+      $('worker-body').innerHTML=rows.length?rows.map(w=>`<tr><td class="mono"><b>${esc(w.employeeNo)}</b></td><td><b>${esc(w.name)}</b></td><td>${esc(w.department)}</td><td>${esc(w.position)}</td><td>${w.shift?`<span class="badge badge-none">${esc(shiftLabel(w.shift))}</span>`:'<span class="badge badge-warn">Sin turno</span>'}</td><td><button class="btn btn-soft btn-sm" onclick="openQrLabel('${w.id}')"><i class="fa-solid fa-qrcode"></i>Ver / imprimir</button></td><td><button class="btn btn-gray btn-sm" onclick="openWorkerModal('${w.id}')"><i class="fa-solid fa-pen"></i>Editar</button></td></tr>`).join(''):'<tr><td colspan="7" class="empty-cell">No hay trabajadores con ese filtro.</td></tr>';
     }
-    function openWorkerModal(id=''){const w=WORKERS.find(x=>x.id===id);$('worker-id').value=w?.id||'';$('worker-modal-title').textContent=w?'Editar trabajador':'Agregar trabajador';$('worker-no').value=w?.employeeNo||'';$('worker-name').value=w?.name||'';$('worker-dept').value=w?.department||'';$('worker-position').value=w?.position||'';openModal('worker-modal')}
-    async function saveWorkerUI(){showLoader('Guardando trabajador…');try{const r=await api({action:'saveWorker',token:SESSION.token,id:$('worker-id').value,employeeNo:$('worker-no').value,name:$('worker-name').value,department:$('worker-dept').value,position:$('worker-position').value});if(!r.success)throw new Error(r.error);closeModal('worker-modal');toast('Trabajador guardado; su QR permanece estable.','ok');await loadWorkers()}catch(e){toast(e.message,'err')}finally{hideLoader()}}
+    function openWorkerModal(id=''){const w=WORKERS.find(x=>x.id===id);$('worker-id').value=w?.id||'';$('worker-modal-title').textContent=w?'Editar trabajador':'Agregar trabajador';$('worker-no').value=w?.employeeNo||'';$('worker-name').value=w?.name||'';$('worker-dept').value=w?.department||'';$('worker-position').value=w?.position||'';$('worker-shift').value=w?.shift||'';openModal('worker-modal')}
+    async function saveWorkerUI(){showLoader('Guardando trabajador…');try{const r=await api({action:'saveWorker',token:SESSION.token,id:$('worker-id').value,employeeNo:$('worker-no').value,name:$('worker-name').value,department:$('worker-dept').value,position:$('worker-position').value,shift:$('worker-shift').value});if(!r.success)throw new Error(r.error);closeModal('worker-modal');toast('Trabajador guardado; su QR permanece estable.','ok');await loadWorkers()}catch(e){toast(e.message,'err')}finally{hideLoader()}}
     function openQrLabel(id){const w=WORKERS.find(x=>x.id===id);if(!w)return;CURRENT_QR_WORKER=w;$('qr-label-name').textContent=w.name;$('qr-label-no').textContent=w.employeeNo;$('qr-code-box').innerHTML='';new QRCode($('qr-code-box'),{text:qrPayloadFor(w.qrToken),width:220,height:220,colorDark:'#0A1628',colorLight:'#FFFFFF',correctLevel:QRCode.CorrectLevel.H});openModal('qr-label-modal')}
     function qrPayloadFor(token){if(location.protocol==='http:'||location.protocol==='https:'){const base=location.origin+location.pathname;return base+'?qr='+encodeURIComponent(token)}return 'KTMEX-TRN:'+token}
     function printQrLabel(){
       if(!CURRENT_QR_WORKER)return;const canvas=$('qr-code-box').querySelector('canvas'),img=$('qr-code-box').querySelector('img');const src=canvas?.toDataURL('image/png')||img?.src;if(!src){toast('El QR todavía no termina de generarse.','err');return}
-      const win=window.open('','_blank','width=500,height=650');if(!win){toast('Permite ventanas emergentes para imprimir.','err');return}win.document.write(`<!doctype html><html><head><title>QR ${esc(CURRENT_QR_WORKER.employeeNo)}</title><style>body{font-family:Arial;text-align:center;padding:30px;color:#0A1628}.label{border:2px solid #0A1628;border-radius:16px;padding:20px;display:inline-block;max-width:340px}img{width:250px;height:250px}h2{font-size:18px;margin:10px 0 4px}p{font-size:12px;margin:4px}.top{font-size:11px;font-weight:bold;letter-spacing:2px;color:#2563EB}@media print{button{display:none}}</style></head><body><div class="label"><div class="top">KTMEX TRAINING</div><img src="${src}"><h2>${esc(CURRENT_QR_WORKER.name)}</h2><p>No. empleado <b>${esc(CURRENT_QR_WORKER.employeeNo)}</b></p><p>Escanee e inicie sesión para consultar</p></div><br><button onclick="window.print()">Imprimir</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`);win.document.close();
+      const win=window.open('','_blank','width=500,height=650');if(!win){toast('Permite ventanas emergentes para imprimir.','err');return}win.document.write(`<!doctype html><html><head><title>QR ${esc(CURRENT_QR_WORKER.employeeNo)}</title><style>body{font-family:Arial;text-align:center;padding:30px;color:#0A1628}.label{border:2px solid #0A1628;border-radius:16px;padding:20px;display:inline-block;max-width:340px}img{width:250px;height:250px}h2{font-size:18px;margin:10px 0 4px}p{font-size:12px;margin:4px}.top{font-size:11px;font-weight:bold;letter-spacing:2px;color:#2563EB}@media print{button{display:none}}</style></head><body><div class="label"><div class="top">KTMEX TRAINING</div><img src="${src}"><h2>${esc(CURRENT_QR_WORKER.name)}</h2><p>No. empleado <b>${esc(CURRENT_QR_WORKER.employeeNo)}</b></p><p>Escanee para consultar capacitaciones y DC3</p></div><br><button onclick="window.print()">Imprimir</button><script>setTimeout(()=>window.print(),500)<\/script></body></html>`);win.document.close();
     }
 
     // ── Importación ───────────────────────────────────────────────────────────
@@ -504,9 +895,9 @@
       const headerIndex=matrix.slice(0,15).findIndex(row=>row.some(v=>headerKey(v)==='NO')&&row.some(v=>headerKey(v)==='NOMBRE'));
       if(headerIndex<0)throw new Error('No se encontró una fila de encabezados con NO y NOMBRE.');
       const headers=matrix[headerIndex].map(headerKey);const indexFor=names=>{for(const n of names){const i=headers.indexOf(n);if(i>=0)return i}return -1};
-      const idx={no:indexFor(['NO','NUMERO DE EMPLEADO','NUMERO EMPLEADO','EMPLOYEE NO']),name:indexFor(['NOMBRE','NOMBRE DEL TRABAJADOR','EMPLEADO']),dept:indexFor(['DEPTO EMP','DEPARTAMENTO','DEPTO','DEPARTMENT']),position:indexFor(['PUESTO','POSITION']),course:indexFor(['CURSO','CAPACITACION','COURSE']),date:indexFor(['FECHA CURSO','FECHA DEL CURSO','FECHA CAPACITACION','FECHA CUANDO TOMO EL CURSO']),expiry:indexFor(['VIGENCIA','FECHA VENCIMIENTO','VENCIMIENTO','EXPIRY']),status:indexFor(['ESTATUS','STATUS'])};
+      const idx={no:indexFor(['NO','NUMERO DE EMPLEADO','NUMERO EMPLEADO','EMPLOYEE NO']),name:indexFor(['NOMBRE','NOMBRE DEL TRABAJADOR','EMPLEADO']),dept:indexFor(['DEPTO EMP','DEPARTAMENTO','DEPTO','DEPARTMENT']),position:indexFor(['PUESTO','POSITION']),course:indexFor(['CURSO','CAPACITACION','COURSE']),date:indexFor(['FECHA CURSO','FECHA DEL CURSO','FECHA CAPACITACION','FECHA CUANDO TOMO EL CURSO']),expiry:indexFor(['VIGENCIA','FECHA VENCIMIENTO','VENCIMIENTO','EXPIRY']),status:indexFor(['ESTATUS','STATUS']),shift:indexFor(['TURNO','GRUPO','GRUPO TURNO','SHIFT'])};
       const required=['no','name','dept','position','course','expiry'];const missing=required.filter(k=>idx[k]<0);if(missing.length)throw new Error('Faltan columnas requeridas: '+missing.join(', '));
-      return matrix.slice(headerIndex+1).map((row,i)=>({sourceRow:headerIndex+i+2,employeeNo:cellText(row[idx.no]).replace(/\.0$/,''),name:cellText(row[idx.name]),department:cellText(row[idx.dept]),position:cellText(row[idx.position]),course:cellText(row[idx.course]),dateTaken:idx.date>=0?excelDate(row[idx.date]):'',expiryDate:excelDate(row[idx.expiry]),sourceStatus:idx.status>=0?normalizeStatusClient(row[idx.status]):''})).filter(r=>r.employeeNo||r.name||r.course);
+      return matrix.slice(headerIndex+1).map((row,i)=>({sourceRow:headerIndex+i+2,employeeNo:cellText(row[idx.no]).replace(/\.0$/,''),name:cellText(row[idx.name]),department:cellText(row[idx.dept]),position:cellText(row[idx.position]),course:cellText(row[idx.course]),dateTaken:idx.date>=0?excelDate(row[idx.date]):'',expiryDate:excelDate(row[idx.expiry]),sourceStatus:idx.status>=0?normalizeStatusClient(row[idx.status]):'',shift:idx.shift>=0?cellText(row[idx.shift]):''})).filter(r=>r.employeeNo||r.name||r.course);
     }
     function refreshImportStatuses(){
       if(!IMPORT_ROWS.length)return;const mode=$('import-status-mode').value;IMPORT_ROWS.forEach(r=>r.status=r.sourceStatus||(mode==='SUGGEST'?suggestStatusClient(r.expiryDate):mode));renderImportPreview();
@@ -515,7 +906,7 @@
       const invalid=IMPORT_ROWS.filter(r=>!r.employeeNo||!r.name||!r.department||!r.position||!r.course||!r.expiryDate);const missingDate=IMPORT_ROWS.filter(r=>!r.dateTaken).length;const counts={};IMPORT_ROWS.forEach(r=>counts[r.status]=(counts[r.status]||0)+1);
       $('import-summary').innerHTML=[['Registros',IMPORT_ROWS.length],['Vigentes',counts['Vigente']||0],['Por vencer',counts['Por vencer']||0],['Vencidas',counts['Vencida']||0],['Sin fecha curso',missingDate]].map(([l,v])=>`<div class="import-stat"><b>${v}</b><span>${l.toUpperCase()}</span></div>`).join('');
       const warning=[];if(invalid.length)warning.push(invalid.length+' fila(s) incompleta(s) se reportarán como error.');if(missingDate)warning.push(missingDate+' fila(s) no tienen FECHA_CURSO; deberán completarse posteriormente.');$('import-warning').textContent=warning.join(' ');$('import-warning').classList.toggle('hidden',!warning.length);
-      $('import-body').innerHTML=IMPORT_ROWS.slice(0,50).map(r=>`<tr><td>${r.sourceRow}</td><td class="mono">${esc(r.employeeNo)}</td><td>${esc(r.name)}</td><td>${esc(r.department)}</td><td>${esc(r.position)}</td><td>${esc(r.course)}</td><td>${fmtDate(r.dateTaken)}</td><td>${fmtDate(r.expiryDate)}</td><td><span class="badge status-${statusKeyClient(r.status)}">${esc(r.status||'Sin definir')}</span></td></tr>`).join('')+(IMPORT_ROWS.length>50?`<tr><td colspan="9" class="empty-cell">Se muestran 50 de ${IMPORT_ROWS.length} filas. Todas serán procesadas.</td></tr>`:'');
+      $('import-body').innerHTML=IMPORT_ROWS.slice(0,50).map(r=>`<tr><td>${r.sourceRow}</td><td class="mono">${esc(r.employeeNo)}</td><td>${esc(r.name)}</td><td>${esc(r.department)}</td><td>${esc(r.position)}</td><td>${esc(r.shift||'—')}</td><td>${esc(r.course)}</td><td>${fmtDate(r.dateTaken)}</td><td>${fmtDate(r.expiryDate)}</td><td><span class="badge status-${statusKeyClient(r.status)}">${esc(r.status||'Sin definir')}</span></td></tr>`).join('')+(IMPORT_ROWS.length>50?`<tr><td colspan="10" class="empty-cell">Se muestran 50 de ${IMPORT_ROWS.length} filas. Todas serán procesadas.</td></tr>`:'');
     }
     async function confirmImport(){
       if(!IMPORT_ROWS.length){toast('Selecciona un archivo.','err');return}if(!$('import-confirm').checked){toast('Confirma que Entrenamiento revisó la vista previa.','err');return}
@@ -531,7 +922,7 @@
       if($('course-list'))$('course-list').innerHTML=courses.map(x=>`<option value="${attr(x.name)}"></option>`).join('');
       if($('training-department')){const old=$('training-department').value;$('training-department').innerHTML='<option value="">Todos</option>'+departments.map(x=>`<option>${esc(x.name)}</option>`).join('');$('training-department').value=old}
     }
-    function renderCatalogs(){const d=CATALOGS.departments||[],c=CATALOGS.courses||[];$('department-count').textContent=d.length+' elementos';$('course-count').textContent=c.length+' elementos';$('department-chips').innerHTML=d.length?d.map(x=>`<span class="chip">${esc(x.name)}</span>`).join(''):'<span style="color:#94A3B8;font-size:.72rem">Sin departamentos.</span>';$('course-chips').innerHTML=c.length?c.map(x=>`<span class="chip">${esc(x.name)}</span>`).join(''):'<span style="color:#94A3B8;font-size:.72rem">Los cursos aparecerán al crear o importar capacitaciones.</span>'}
+    function renderCatalogs(){const d=CATALOGS.departments||[],c=CATALOGS.courses||[];$('department-count').textContent=d.length+' elementos';$('course-count').textContent=c.length+' elementos';$('department-chips').innerHTML=d.length?d.map(x=>`<span class="chip">${esc(x.name)}</span>`).join(''):'<span style="color:#94A3B8;font-size:.72rem">Sin departamentos.</span>';$('course-chips').innerHTML=c.length?c.map(x=>`<button class="chip chip-btn" title="Editar vigencia" onclick="openCourseModal('${attr(x.name)}')">${esc(x.name)} · ${x.validityMonths?x.validityMonths+' meses':'<span style="color:#B45309">sin vigencia</span>'}</button>`).join(''):'<span style="color:#94A3B8;font-size:.72rem">Los cursos aparecerán al crear o importar capacitaciones.</span>'}
     function openDepartmentModal(){$('department-name').value='';openModal('department-modal')}
     async function saveDepartmentUI(){const name=$('department-name').value.trim();if(!name){toast('Escribe el nombre.','err');return}showLoader('Guardando departamento…');try{const r=await api({action:'saveDepartment',token:SESSION.token,name});if(!r.success)throw new Error(r.error);closeModal('department-modal');toast('Departamento guardado.','ok');await loadCatalogs()}catch(e){toast(e.message,'err')}finally{hideLoader()}}
 
@@ -564,7 +955,7 @@
     function headerKey(value){return normalize(value).replace(/_/g,' ').replace(/\s+/g,' ').toUpperCase()}
     function cellText(value){if(value===null||value===undefined)return '';if(value instanceof Date)return excelDate(value);return String(value).trim()}
     function excelDate(value){
-      if(!value)return '';if(value instanceof Date&&!isNaN(value))return localIso(value);if(typeof value==='number'){const d=XLSX.SSF.parse_date_code(value);return d?`${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`:''}
+      if(!value)return '';if(value instanceof Date&&!isNaN(value))return localIso(value);if(typeof value==='number'){if(Math.abs(value-Math.round(value))<1/1440)value=Math.round(value);const d=XLSX.SSF.parse_date_code(value);return d?`${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`:''}
       const s=String(value).trim();let m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m)return `${m[1]}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')}`;m=s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);if(m)return `${m[3]}-${String(m[2]).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`;const d=new Date(s);return isNaN(d)?'':localIso(d)
     }
     function localIso(date){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`}
