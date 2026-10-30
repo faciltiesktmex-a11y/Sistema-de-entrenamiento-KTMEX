@@ -313,6 +313,7 @@
 
   <div id="worker-modal" class="modal-bg"><div class="modal"><div class="modal-head"><h3 id="worker-modal-title">Agregar trabajador</h3><button class="modal-close" onclick="closeModal('worker-modal')"><i class="fa-solid fa-xmark"></i></button></div><div class="modal-body">
     <input id="worker-id" type="hidden"><div class="grid-2"><div class="field"><label>Número de empleado *</label><input id="worker-no" class="inp"></div><div class="field"><label>Nombre completo *</label><input id="worker-name" class="inp"></div><div class="field"><label>Departamento *</label><input id="worker-dept" class="inp" list="department-list"></div><div class="field"><label>Puesto *</label><input id="worker-position" class="inp"></div><div class="field full"><label>Turno</label><select id="worker-shift" class="inp"><option value="">Sin turno asignado</option><option value="ROTATIVO A">Rotativo · Grupo A</option><option value="ROTATIVO B">Rotativo · Grupo B</option><option value="FIJO 1">Fijo 1° turno</option><option value="FIJO 2">Fijo 2° turno</option></select><small>Rotativos cambian de turno cada 2 semanas. Se usa para no programarlo en 2° turno.</small></div></div>
+    <div id="worker-trainings-box" class="hidden" style="margin-top:18px"><label style="display:block;font-weight:700;margin-bottom:8px">Capacitaciones del trabajador</label><div id="worker-trainings-list" style="border:1px solid #E2E8F0;border-radius:12px;overflow:hidden"></div><small style="display:block;margin-top:6px;color:#64748B">Eliminar quita la capacitación del expediente y del QR. Si tenía DC3, el PDF se conserva en la carpeta Histórico de Drive.</small></div>
     <div class="notice notice-info" style="margin-top:14px"><b>El QR no cambia.</b> Al editar nombre, departamento, puesto o capacitaciones, el mismo código mostrará la información actualizada.</div>
   </div><div class="modal-foot"><button class="btn btn-gray" onclick="closeModal('worker-modal')">Cancelar</button><button class="btn btn-primary" onclick="saveWorkerUI()"><i class="fa-solid fa-floppy-disk"></i>Guardar</button></div></div></div>
 
@@ -377,7 +378,7 @@
     // Igual que Facilities: esta es la única línea que debe actualizarse después
     // de implementar Code.gs como Aplicación web en Google Apps Script.
     window.SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQOfkCQWUqrQVPfkDalYUkqjfK0uncI5CPusKDK0yg2c4_4Bn82NYIR1Gt01qtxVXCjw/exec';
-    const EXPECTED_BACKEND_VERSION = '2.1.0-programacion-2026-10-28';
+    const EXPECTED_BACKEND_VERSION = '2.1.1-importacion-2026-10-30';
     const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     const WEEKDAYS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
     let PUBLIC_QR = '';
@@ -461,10 +462,10 @@
       pill.innerHTML=online?'<i class="fa-solid fa-wifi"></i><span>En línea</span>':'<i class="fa-solid fa-wifi-slash"></i><span>Sin conexión</span>';
     }
 
-    async function api(payload,handleSession=true){
+    async function api(payload,handleSession=true,timeoutMs=60000){
       if(!window.SCRIPT_URL || window.SCRIPT_URL.startsWith('REEMPLAZA_')) throw new Error('Configura window.SCRIPT_URL con la URL /exec de Apps Script.');
       const controller=new AbortController();
-      const timer=setTimeout(()=>controller.abort(),60000);
+      const timer=setTimeout(()=>controller.abort(),timeoutMs);
       try{
         const response=await fetch(window.SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),signal:controller.signal,redirect:'follow'});
         const text=await response.text();
@@ -478,6 +479,10 @@
       }finally{clearTimeout(timer)}
     }
 
+    // Reintenta solo errores de red/tiempo. Úsese únicamente en operaciones idempotentes (importación).
+    async function apiRetry(payload,tries=3,timeoutMs=150000){
+      let last;for(let i=0;i<tries;i++){try{return await api(payload,true,timeoutMs)}catch(e){last=e;if(!/tiempo de espera|No se pudo conectar/i.test(e.message||''))throw e;await new Promise(r=>setTimeout(r,1500*(i+1)))}}throw last;
+    }
     function saveSession(){if(SESSION)sessionStorage.setItem('ktmex_training_session',JSON.stringify(SESSION));else sessionStorage.removeItem('ktmex_training_session')}
     function isAdmin(){return SESSION?.user?.role==='admin'}
     function enterApp(){
@@ -874,7 +879,26 @@
       const q=normalize($('worker-search')?.value);const rows=WORKERS.filter(w=>!q||normalize([w.employeeNo,w.name,w.department,w.position,shiftLabel(w.shift)].join(' ')).includes(q));
       $('worker-body').innerHTML=rows.length?rows.map(w=>`<tr><td class="mono"><b>${esc(w.employeeNo)}</b></td><td><b>${esc(w.name)}</b></td><td>${esc(w.department)}</td><td>${esc(w.position)}</td><td>${w.shift?`<span class="badge badge-none">${esc(shiftLabel(w.shift))}</span>`:'<span class="badge badge-warn">Sin turno</span>'}</td><td><button class="btn btn-soft btn-sm" onclick="openQrLabel('${w.id}')"><i class="fa-solid fa-qrcode"></i>Ver / imprimir</button></td><td><button class="btn btn-gray btn-sm" onclick="openWorkerModal('${w.id}')"><i class="fa-solid fa-pen"></i>Editar</button></td></tr>`).join(''):'<tr><td colspan="7" class="empty-cell">No hay trabajadores con ese filtro.</td></tr>';
     }
-    function openWorkerModal(id=''){const w=WORKERS.find(x=>x.id===id);$('worker-id').value=w?.id||'';$('worker-modal-title').textContent=w?'Editar trabajador':'Agregar trabajador';$('worker-no').value=w?.employeeNo||'';$('worker-name').value=w?.name||'';$('worker-dept').value=w?.department||'';$('worker-position').value=w?.position||'';$('worker-shift').value=w?.shift||'';openModal('worker-modal')}
+    function openWorkerModal(id=''){const w=WORKERS.find(x=>x.id===id);$('worker-id').value=w?.id||'';$('worker-modal-title').textContent=w?'Editar trabajador':'Agregar trabajador';$('worker-no').value=w?.employeeNo||'';$('worker-name').value=w?.name||'';$('worker-dept').value=w?.department||'';$('worker-position').value=w?.position||'';$('worker-shift').value=w?.shift||'';openModal('worker-modal');loadWorkerTrainings(w?.id||'')}
+    let WORKER_TRAININGS=[];
+    async function loadWorkerTrainings(workerId){
+      const box=$('worker-trainings-box'),list=$('worker-trainings-list');
+      if(!workerId){box.classList.add('hidden');list.innerHTML='';return}
+      box.classList.remove('hidden');list.innerHTML='<div style="padding:12px;color:#64748B">Cargando capacitaciones…</div>';
+      try{
+        const r=await api({action:'listTrainings',token:SESSION.token,workerId});if(!r.success)throw new Error(r.error);
+        if($('worker-id').value!==workerId)return;
+        const items=r.trainings||[];WORKER_TRAININGS=items;
+        list.innerHTML=items.length?items.map((t,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid #E2E8F0;flex-wrap:wrap"><div style="flex:1;min-width:180px"><b>${esc(t.course)}</b><br><span style="color:#64748B;font-size:.82rem">Vence ${fmtDate(t.expiryDate)}${t.hasDc3?' · con DC3':''}</span></div><span class="badge status-${statusKeyClient(t.computedStatus||t.status)}">${esc(t.computedStatus||t.status)}</span><button type="button" class="btn btn-red btn-sm" onclick="deleteTrainingUI(${i})"><i class="fa-solid fa-trash"></i>Eliminar</button></div>`).join(''):'<div style="padding:12px;color:#64748B">Este trabajador no tiene capacitaciones registradas.</div>';
+      }catch(e){list.innerHTML=`<div style="padding:12px;color:#B91C1C">${esc(e.message)}</div>`}
+    }
+    async function deleteTrainingUI(i){
+      const t=WORKER_TRAININGS[i];if(!t)return;const id=t.id,course=t.course;
+      if(!confirm(`¿Eliminar la capacitación "${course}" de este trabajador?\n\nDejará de aparecer en su expediente y en el QR. Si tiene DC3, el PDF se conserva en Histórico.`))return;
+      const workerId=$('worker-id').value;showLoader('Eliminando capacitación…');
+      try{const r=await api({action:'deleteTraining',token:SESSION.token,id});if(!r.success)throw new Error(r.error);toast('Capacitación eliminada.','ok');TRAININGS=[];await loadWorkerTrainings(workerId)}
+      catch(e){toast(e.message,'err')}finally{hideLoader()}
+    }
     async function saveWorkerUI(){showLoader('Guardando trabajador…');try{const r=await api({action:'saveWorker',token:SESSION.token,id:$('worker-id').value,employeeNo:$('worker-no').value,name:$('worker-name').value,department:$('worker-dept').value,position:$('worker-position').value,shift:$('worker-shift').value});if(!r.success)throw new Error(r.error);closeModal('worker-modal');toast('Trabajador guardado; su QR permanece estable.','ok');await loadWorkers()}catch(e){toast(e.message,'err')}finally{hideLoader()}}
     function openQrLabel(id){const w=WORKERS.find(x=>x.id===id);if(!w)return;CURRENT_QR_WORKER=w;$('qr-label-name').textContent=w.name;$('qr-label-no').textContent=w.employeeNo;$('qr-code-box').innerHTML='';new QRCode($('qr-code-box'),{text:qrPayloadFor(w.qrToken),width:220,height:220,colorDark:'#0A1628',colorLight:'#FFFFFF',correctLevel:QRCode.CorrectLevel.H});openModal('qr-label-modal')}
     function qrPayloadFor(token){if(location.protocol==='http:'||location.protocol==='https:'){const base=location.origin+location.pathname;return base+'?qr='+encodeURIComponent(token)}return 'KTMEX-TRN:'+token}
@@ -910,8 +934,21 @@
     }
     async function confirmImport(){
       if(!IMPORT_ROWS.length){toast('Selecciona un archivo.','err');return}if(!$('import-confirm').checked){toast('Confirma que Entrenamiento revisó la vista previa.','err');return}
-      const btn=$('import-button');btn.disabled=true;showLoader('Importando trabajadores y capacitaciones…');
-      try{const r=await api({action:'importTrainingRows',token:SESSION.token,fileName:IMPORT_FILE_NAME,updateWorkerData:$('import-update-workers').checked,rows:IMPORT_ROWS});if(!r.success)throw new Error(r.error);toast(`Importación lista: ${r.workersCreated} trabajador(es) y ${r.trainingsCreated} capacitación(es) nuevas. ${r.errors.length} error(es).`,r.errors.length?'info':'ok');$('import-confirm').checked=false;WORKERS=[];TRAININGS=[];await loadDashboard()}catch(e){toast(e.message,'err')}finally{hideLoader();btn.disabled=false}
+      const btn=$('import-button');btn.disabled=true;
+      const CHUNK=150,total=IMPORT_ROWS.length,parts=Math.ceil(total/CHUNK),acc={workersCreated:0,workersUpdated:0,trainingsCreated:0,trainingsUpdated:0,errors:[]};let done=0;
+      showLoader(`Importando 0 de ${total} filas…`);
+      try{
+        for(let p=0;p<parts;p++){
+          const rows=IMPORT_ROWS.slice(p*CHUNK,(p+1)*CHUNK);$('loader-text').textContent=`Importando ${done} de ${total} filas (bloque ${p+1} de ${parts})…`;
+          let r;try{r=await apiRetry({action:'importTrainingRows',token:SESSION.token,fileName:IMPORT_FILE_NAME,updateWorkerData:$('import-update-workers').checked,part:p+1,parts,rows})}
+          catch(e){throw new Error(e.message+(done?` Se alcanzaron a guardar ${done} de ${total} filas; vuelve a importar el mismo archivo y continuará sin duplicar.`:''))}
+          if(!r.success)throw new Error(r.error+(done?` Se alcanzaron a guardar ${done} de ${total} filas; vuelve a importar el mismo archivo y continuará sin duplicar.`:''));
+          ['workersCreated','workersUpdated','trainingsCreated','trainingsUpdated'].forEach(k=>acc[k]+=r[k]||0);acc.errors.push(...(r.errors||[]));done+=rows.length;
+        }
+        const sample=acc.errors.slice(0,3).map(e=>`fila ${e.row}: ${e.error}`).join(' | ');
+        toast(`Importación lista: ${acc.workersCreated} trabajador(es) nuevos, ${acc.trainingsCreated} capacitación(es) nuevas y ${acc.trainingsUpdated} actualizadas. ${acc.errors.length} error(es).${sample?' '+sample:''}`,acc.errors.length?'info':'ok');
+        $('import-confirm').checked=false;WORKERS=[];TRAININGS=[];await loadDashboard();
+      }catch(e){toast(e.message,'err')}finally{hideLoader();btn.disabled=false}
     }
 
     // ── Catálogos ─────────────────────────────────────────────────────────────
